@@ -5,40 +5,61 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class A {
-    public static void main(String[] args) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+    public static void main(String[] args) throws IOException { try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             final int emptyPlaceQuant = Integer.parseInt(reader.readLine());
+            ArrayList<Integer> emptyPlaces = new ArrayList<Integer>();
+            int value;
+            int position = -1;
+            boolean previousIsSpace = true;
 
-            ArrayList<String> inputLine = new ArrayList<>(List.of(reader.readLine().split(" ")));
-            int leftEmpty = -1;
-            int rightEmpty = -1;
-
-            for (int i = 0; i < emptyPlaceQuant; i++) {
-                if (inputLine.get(i).equals("0")) {
-                    System.out.print("0 ");
-                    rightEmpty = i;
-                } else {
-                    if (!inputLine.get(i).equals("0") && rightEmpty < leftEmpty && leftEmpty > 0) {
-                        System.out.print(rightEmpty > 0 ? Math.min(i - rightEmpty, leftEmpty - i) + " " :
-                                leftEmpty - i + " ");
-                        continue;
-                    }
-
-                    if (leftEmpty <= rightEmpty || leftEmpty < 0) {
-                        for (int j = i; j < emptyPlaceQuant; j++) {
-                            if (inputLine.get(j).equals("0")) {
-                                leftEmpty = j;
-                                System.out.print(rightEmpty > -1 ? Math.min(i - rightEmpty, leftEmpty - i) + " "
-                                        : leftEmpty - i + " ");
-                                break;
-                            }
-                            if (j == emptyPlaceQuant - 1) {
-                                System.out.print(i - rightEmpty + " ");
-                            }
-                        }
+            while ((value = reader.read()) > 0) {
+                if (previousIsSpace && value != 32) {
+                    ++position;
+                    if (value == 48) {
+                        emptyPlaces.add(position);
                     }
                 }
+                previousIsSpace = (value == 32);
+                if (position == emptyPlaceQuant - 1) break;
             }
+
+            int lastPrevZero = -1;
+            int lastNextZero = -1;
+            int lastNextIndex = 0;
+
+
+            for (int i = 0; i < emptyPlaceQuant; ++i) {
+                if (lastNextZero == -1 || i > lastNextZero) {
+                    if (lastNextZero >= 0) {
+                        lastPrevZero = lastNextZero;
+                        lastNextZero = -1;
+                    }
+
+                    for (int j = lastNextIndex; j < emptyPlaces.size(); ++j) {
+                        if (emptyPlaces.get(j) >= i) {
+                            lastNextZero = emptyPlaces.get(j);
+                            lastNextIndex = j;
+                            break;
+                        }
+                    }
+
+
+                }
+
+                if (lastNextZero >= 0 && lastPrevZero >= 0) {
+                    System.out.printf("%d ", Math.min(lastNextZero - i, i - lastPrevZero));
+                }
+                if (lastNextZero < 0 && lastPrevZero >= 0) {
+                    System.out.printf("%d ", i - lastPrevZero);
+                }
+                if (lastNextZero >= 0 && lastPrevZero < 0) {
+                    System.out.printf("%d ", lastNextZero - i);
+                }
+            }
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
