@@ -8,42 +8,54 @@ import java.util.Stack;
 
 public class StackMax {
     final Stack<Integer> stack;
+    Integer max;
 
     public StackMax() {
         stack = new Stack<>();
+        max = null;
     }
 
     public void push(int x) {
         stack.push(x);
+        if (max == null || x > max) {
+            max = x;
+        }
     }
 
     public void pop() {
         try {
-            stack.pop();
+            final Integer peek = stack.peek();
+            if (peek.equals(max)&&stack.size()==1){
+                max=null;
+                stack.pop();
+
+            }
+             else if (peek.equals(max)&&stack.size()!=1) {
+                stack.pop();
+                max = find_max();
+            }
+
         } catch (EmptyStackException ex) {
             System.out.println("error");
         }
     }
 
-    public Integer get_max() {
+    public Integer find_max() {
+        final Stack<Integer> cloneStack = (Stack<Integer>) stack.clone();
+        int newMax = -100000000;
 
-        Integer max = -10000000;
-        try {
-            while (true) {
-                if (stack.size() == 1) {
-                    return stack.peek();
-                } else {
-                    final Integer peek = stack.peek();
-                    if (peek > max) {
-                        max = peek;
-                    }
-                }
+        while (!cloneStack.isEmpty()){
+            final Integer pop = cloneStack.pop();
+            if (pop> newMax){
+                newMax = pop;
             }
-        } catch (EmptyStackException ex) {
-            return null;
         }
+        return newMax;
     }
 
+    public Integer get_max() {
+        return stack.isEmpty() ? null : max;
+    }
 
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
