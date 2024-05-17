@@ -11,15 +11,15 @@ import java.io.*;
 
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 push_front: Элемент будет добавлен в начало дэка, тк указатель показывает на начало массива и
- передвигается вперед  при добавлении элементов
-pop_front: Элемент будет извлечен из начала  дэка, тк указатель показывает на начало массива и
- передвигается  при извлечении элементов.  Если в начале  дека элементов не было элементов,
+ передвигается вперед после добавлении элементов
+pop_front: Элемент будет извлечен из начала  дэка, тк указатель будет передвинут назад  и затем
+ элемент будет извлечен.  Если в начале  дека  не было элементов,
   то указатель  перескочит на элементы из конца дэка
 push_back: Элемент будет добавлен в конец дэка, тк указатель показывает на конец массива и
- передвигается  назад при добавлении элементов.
-pop_back: Элемент будет извлечен из конца дэка, тк указатель показывает на конец массива и
- передвигается  при извлечении элементов.  Если в конце  дека элементов не было элементов,
-  то указатель  перескочит на элементы из начала дэка
+ передвигается  назад после добавлении элементов.
+pop_back: Элемент будет извлечен из конца дэка, тк указатель  будет сначала передвинут , а затем
+элемент будет извлечен .   Если в конце  дека  не было элементов,
+  то указатель  перескочит на элементы из начала дэка.
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
 Сложность O(n),  где  n- это длина входной строки.
@@ -47,13 +47,14 @@ public class Deque {
         size = 0;
     }
 
-    public void push_front(int x) {
+    public boolean push_front(int x) {
         if (size != max_n) {
             deque[head] = x;
             head = (head + 1) % max_n;
             size++;
+            return true;
         } else {
-            System.out.println("error");
+            return false;
         }
     }
 
@@ -69,13 +70,14 @@ public class Deque {
         }
     }
 
-    public void push_back(int x) {
+    public boolean push_back(int x) {
         if (size != max_n) {
             deque[tail] = x;
             tail = (tail - 1 + max_n) % max_n;
             size++;
+            return true;
         } else {
-            System.out.println("error");
+            return false;
         }
     }
 
@@ -102,10 +104,16 @@ public class Deque {
 
                 switch (command[0]) {
                     case "push_front":
-                        deque1.push_front(Integer.parseInt(command[1]));
+                        final boolean pushFront = deque1.push_front(Integer.parseInt(command[1]));
+                        if (!pushFront) {
+                            System.out.println("error");
+                        }
                         break;
                     case "push_back":
-                        deque1.push_back(Integer.parseInt(command[1]));
+                        final boolean pushBack = deque1.push_back(Integer.parseInt(command[1]));
+                        if (!pushBack) {
+                            System.out.println("error");
+                        }
                         break;
                     case "pop_front":
                         System.out.println(deque1.pop_front());
