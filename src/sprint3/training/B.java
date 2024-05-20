@@ -12,8 +12,6 @@ public class B {
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             final List<Integer> input = readList(reader);
-            List<String> firstLetterList = new ArrayList<>();
-            List<String> secondLetterList = new ArrayList<>();
 
             List<String> two = new ArrayList<>();
             two.add("a");
@@ -59,35 +57,32 @@ public class B {
             nine.add("z");
 
 
-            switch (input.get(0)) {
-                case 2:
-                    firstLetterList = two;
-                    break;
-                case 3:
-                    firstLetterList = three;
-                    break;
-
-            }
-
-            switch (input.get(1)) {
-                case 2:
-                    secondLetterList = two;
-                    break;
-                case 3:
-                    secondLetterList = three;
-                    break;
-            }
-            genBinary(0, firstLetterList, secondLetterList, "");
+            genBinary(input, "");
         }
     }
 
-    static void genBinary(int counter, List<String> lettersList, List<String> secondLettersList, String prefix) {
-        if (counter == 2) {
+    static void genBinary(List<Integer> input, String prefix) {
+
+        ArrayList<String> letters = new ArrayList<>();
+        if (input.isEmpty()) {
             System.out.println(prefix);
         } else {
-            for (int i = 0; i < lettersList.size(); i++) {
-                genBinary(counter + 1, lettersList, secondLettersList, prefix + lettersList.get(i));
+            final Integer integer = input.get(0);
+            input.remove(0);
+
+            switch (integer) {
+                case 2:
+                    letters.add("a");
+                    letters.add("b");
+                    letters.add("c");
+                    break;
+                case 3:
+                    letters.add("d");
+                    letters.add("e");
+                    letters.add("f");
+                    break;
             }
+            letters.forEach((it) -> genBinary(input, prefix + it));
         }
     }
 
