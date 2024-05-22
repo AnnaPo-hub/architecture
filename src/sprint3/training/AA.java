@@ -15,29 +15,36 @@ public class AA {
             final int elementToFind = Integer.parseInt(reader.readLine());
             final List<Integer> inputArray = readList(reader);
 
+            //последний элемент левой части сломанного массива
             final int mistakePlace = getMistakePlace(inputArray.subList(0, inputArray.size() / 2), inputArray.subList(inputArray.size() / 2, inputArray.size()));
 
-            System.out.println(" вывод для теста :  метод должен вернуть первый элемент правой половины сломанного массива  " +
-                    "или -1 , если массив отсортирован" + mistakePlace);
+            System.out.println(" вывод для теста :  метод должен вернуть последний элемент левой половины сломанного массива  " +
+                    "или -1 , если массив отсортирован  mistakePlace " + mistakePlace);
 
             //  если getMistakePlace вернул -1, то вызвать простой бинарный поиск
             if (mistakePlace == -1) {
-                final int binary = getBinary(inputArray, elementToFind);
+                //   final int binary = Arrays.binarySearch(inputArray.toArray(), elementToFind);
+                final int binary = getBinary(inputArray, elementToFind, 0, inputArray.size());
                 System.out.println("нашелся индекс : " + binary);
+            } else {
+                final int mistakePlaceIndex = inputArray.indexOf(mistakePlace);
+                if (elementToFind < inputArray.get(mistakePlaceIndex)) {
+                    System.out.println("Финальный ответ: ");
+                    System.out.println(getBinary(inputArray, elementToFind, mistakePlaceIndex + 1, inputArray.size() - 1));
+                } else {
+                    System.out.println("Финальный ответ: ");
+                    System.out.println(getBinary(inputArray, elementToFind, 0, mistakePlaceIndex));
+                }
             }
         }
     }
 
-    private static int getIndex(List<Integer> inputArray, int elementToFind, int arraySize) {
-
-        return 0;
-    }
 
     //нужно найти границу  в данном массиве, где сортировка поломана
     private static int getMistakePlace(List<Integer> leftArray, List<Integer> rightArray) {
 
         if (leftArray.get(leftArray.size() - 1) > rightArray.get(0)) {  // базовый случай рекурсии
-            return rightArray.get(0);
+            return leftArray.get(leftArray.size() - 1);
         }
         if (leftArray.size() == 1 || rightArray.size() == 1) { // не найдено поломанной сортировки
             return -1;
@@ -45,18 +52,18 @@ public class AA {
         return getMistakePlace(leftArray.subList(0, leftArray.size() / 2), rightArray.subList(rightArray.size() / 2, rightArray.size()));
     }
 
-    private static int getBinary(List<Integer> inputArray, int elementToFind) {
-        final Integer integer = inputArray.get(inputArray.size() / 2);
-        if (elementToFind == integer) {
-            return inputArray.indexOf(integer);
-        } else if (elementToFind > integer) {
-            List<Integer> rightSide = inputArray.subList(inputArray.size() / 2, inputArray.size());
-            getBinary(rightSide, elementToFind);
-        } else if (elementToFind < integer) {
-            List<Integer> leftSide = inputArray.subList(0, inputArray.size() / 2);
-            getBinary(leftSide, elementToFind);
+    private static int getBinary(List<Integer> inputArray, int elementToFind, int from, int to) {
+        if (from <= to) {
+            int middle = (from + to) / 2;
+
+            if (elementToFind > inputArray.get(middle)) {
+                return getBinary(inputArray, elementToFind, middle + 1, to);
+            } else if (elementToFind < inputArray.get(middle)) {
+                return getBinary(inputArray, elementToFind, from, middle - 1);
+            }
+            return middle;
         }
-        return elementToFind;
+        return -1;
     }
 
     private static List<Integer> readList(BufferedReader reader) throws IOException {
