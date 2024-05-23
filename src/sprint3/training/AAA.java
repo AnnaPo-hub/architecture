@@ -1,6 +1,9 @@
 package sprint3.training;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StreamTokenizer;
 
 public class AAA {
 
@@ -14,10 +17,13 @@ public class AAA {
             //   final int binary = Arrays.binarySearch(inputArray.toArray(), elementToFind);
             return getBinary(arr, k, 0, arr.length);
         } else {
-            if (k < arr[mistakePlace] && k < arr[0]) { // ищем справа
-                return getBinary(arr, k, mistakePlace + 1, arr.length - 1);
-            } else if (k > arr[mistakePlace] && k > arr[0]) { //ищем слева
-                return getBinary(arr, k, 0, mistakePlace);
+            if (k < arr[mistakePlace] && k <arr[0]) { // ищем справа
+                return getBinary(arr, k, mistakePlace + 1, arr.length);
+            } else if (k > arr[mistakePlace] && k > arr[0]||//ищем слева
+                    k< arr[mistakePlace]&& k >= arr[0]
+
+            ) {
+                return getBinary(arr, k, 0, mistakePlace+1);
             }
         }
         return -1;
@@ -103,9 +109,9 @@ public class AAA {
             int middle = (from + to) / 2;
 
             if (elementToFind > inputArray[middle]) {
-                return getBinary(inputArray, elementToFind, middle + 1, to);
+                return getBinary(inputArray, elementToFind, middle + 1, to); // ищем  справа
             } else if (elementToFind < inputArray[middle]) {
-                return getBinary(inputArray, elementToFind, from, middle - 1);
+                return getBinary(inputArray, elementToFind, from, middle); //ищем слева
             }
             return middle;
         }
