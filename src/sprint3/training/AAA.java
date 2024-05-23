@@ -14,7 +14,7 @@ public class AAA {
             //   final int binary = Arrays.binarySearch(inputArray.toArray(), elementToFind);
             return getBinary(arr, k, 0, arr.length);
         } else {
-            if (k < arr[mistakePlace]) {
+            if (k > arr[mistakePlace]) {
                 return getBinary(arr, k, mistakePlace + 1, arr.length - 1);
             } else {
                 return getBinary(arr, k, 0, mistakePlace);
@@ -30,6 +30,10 @@ public class AAA {
 
         int[] inputArray = readList(reader, arraySize);
 
+       int ans = brokenSearch(inputArray, elementToFind);
+
+        System.out.println(ans);
+
         //индекс последнего элемента левой части сломанного массива
         final int mistakePlace = getMistakePlace(inputArray, 0, inputArray.length - 1);
 
@@ -42,7 +46,7 @@ public class AAA {
             final int binary = getBinary(inputArray, elementToFind, 0, inputArray.length);
             System.out.println("нашелся индекс : " + binary);
         } else {
-            if (elementToFind < inputArray[mistakePlace]) {
+            if (elementToFind > inputArray[mistakePlace]) {
                 System.out.println("Финальный ответ: ");
                 System.out.println(getBinary(inputArray, elementToFind, mistakePlace + 1, inputArray.length - 1));
             } else {
@@ -70,6 +74,7 @@ public class AAA {
     //возвращает индекс последнего элемента в левой части  поломанного массива
     private static int getMistakePlace(int[] inputArray, int from, int to) {
         int resultIndex = -1;
+        if (inputArray[from] < inputArray[to]) return resultIndex;
         if (from <= to) {
             int middle = (from + to) / 2;  //индекс середины входящего массива
 
@@ -79,9 +84,9 @@ public class AAA {
 //            } else if (inputArray.length == 2) { // не найдено поломанной сортировки
 //                return -1;
 //            }
-            resultIndex = getMistakePlace(inputArray, 0, middle);
+            resultIndex = getMistakePlace(inputArray, from, middle);
             if (resultIndex == -1) {
-                resultIndex = getMistakePlace(inputArray, middle, inputArray.length - 1);
+                resultIndex = getMistakePlace(inputArray, middle+1, to);
             }
         }
         return resultIndex;
