@@ -4,53 +4,57 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Solution_B {
     public static void main(String[] args) throws IOException {
 
-        final ArrayList<Integer> score = new ArrayList<>();
+        final ArrayList<Student> students = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             final int participantsNumber = Integer.parseInt(reader.readLine());
 
             for (int i = 0; i < participantsNumber; i++) {
                 final String[] currParticipant = reader.readLine().trim().split(" ");
-                score.add(Integer.parseInt(currParticipant[1]));
+                students.add(new Student(currParticipant[0], Integer.parseInt(currParticipant[1]), Integer.parseInt(currParticipant[2])));
             }
         }
 
-        quicksort(score, 0, score.size() - 1);
+        quicksort(students, 0, students.size() - 1);
+
+        for (Student student : students) {
+            System.out.println(student.getName());
+        }
     }
 
-    public static void swap(ArrayList<Integer> array, int leftIndex, int rightIndex) {
-        int temp = array.get(leftIndex);
+    public static void swap(ArrayList<Student> array, int leftIndex, int rightIndex) {
+        Student temp = array.get(leftIndex);
         array.set(leftIndex, array.get(rightIndex));
         array.set(rightIndex, temp);
     }
 
 
-    public static int partition(ArrayList<Integer> array, int leftIndex, int rightIndex) {
-        int pivot = array.get(rightIndex);
-        int rightCopy = rightIndex;
-        while (leftIndex < rightCopy) {
-            while (leftIndex < rightCopy && array.get(leftIndex) < pivot) {
+    public static int partition(ArrayList<Student> array, int leftIndex, int rightIndex) {
+        int pivotIndex = (rightIndex + leftIndex) / 2;
+        Student pivotStudent = array.get(pivotIndex);
+
+        while (leftIndex <= rightIndex) {
+            while (array.get(leftIndex).compareTo(pivotStudent) == -1) {
                 leftIndex++;
             }
-            while (leftIndex < rightCopy && array.get(rightCopy) >= pivot) {
-                rightCopy--;
+            while (array.get(rightIndex).compareTo( pivotStudent) == 1) {
+                rightIndex--;
             }
-            swap(array, leftIndex, rightCopy);
+            if (leftIndex >= rightIndex)
+                break;
+            swap(array, leftIndex++, rightIndex--);
         }
-        swap(array, leftIndex, rightIndex);
-        System.out.println(Arrays.toString(array.toArray()));
-        return leftIndex;
+        return rightIndex;
     }
 
-    public static void quicksort(ArrayList<Integer> array, int leftIndex, int rightIndex) {
+    public static void quicksort(ArrayList<Student> array, int leftIndex, int rightIndex) {
         if (leftIndex < rightIndex) {
-            final int newLeftIndex = partition(array, leftIndex, rightIndex);
-            quicksort(array, leftIndex, newLeftIndex - 1);
-            quicksort(array, newLeftIndex, rightIndex);
+            final int pivotIndex = partition(array, leftIndex, rightIndex);
+            quicksort(array, leftIndex, pivotIndex);
+            quicksort(array, pivotIndex + 1, rightIndex);
         }
     }
 }
