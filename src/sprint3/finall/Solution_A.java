@@ -1,4 +1,4 @@
-package sprint3.training;
+package sprint3.finall;
     /*
 -- ПРИНЦИП РАБОТЫ --
 Используемая структура данных : массив.

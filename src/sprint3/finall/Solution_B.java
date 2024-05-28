@@ -5,6 +5,33 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+/*
+-- ПРИНЦИП РАБОТЫ --
+Используемая структура данных : динамический массив.
+Считываем участников и помещаем их в виде объектов в динамический массив.
+Далее осуществляем быструю сортировку in-place.
+По индексу выбираем опорный элемент из середины массива.
+Добавляем левый и правый указатели  изначально на первый и последний элементы массива.
+В соответствиями с условиями сортировки из задачи передвигаем указатели и меняем местами элементы,
+перемещаем влево элементы, которые меньше опорного элемента, а вправо - которые больше.
+Рекурсивно  повторяем такие переставновки, передавая в метод разные участки массива по индексам.
+Таким образом, в итоге получаем отсортированный массив.
+
+
+-- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+Быстрая сортировка - один из классических алгоримов, который не требует доказательств.
+
+-- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+Сложность быстрой сортировки зависит от выбора опорного элемента. В данной реализации в качестве опорного элемента
+выбран средний элемент массива по индексу. Таким образом, скорость сортировки O(n log n).
+
+-- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+O(n)  памяти, где n - это  количество элементов в массиве, передаваемое в качестве параметра.
+
+--ID успешной посылки--
+https://contest.yandex.ru/contest/23815/run-report/114694236/
+     */
+
 public class Solution_B {
     public static void main(String[] args) throws IOException {
 
@@ -37,10 +64,10 @@ public class Solution_B {
         Student pivotStudent = array.get(pivotIndex);
 
         while (leftIndex <= rightIndex) {
-            while (array.get(leftIndex).compareTo(pivotStudent) == -1) {
+            while (array.get(leftIndex).compareTo(pivotStudent) < 0) {
                 leftIndex++;
             }
-            while (array.get(rightIndex).compareTo( pivotStudent) == 1) {
+            while (array.get(rightIndex).compareTo(pivotStudent) > 0) {
                 rightIndex--;
             }
             if (leftIndex >= rightIndex)
@@ -55,6 +82,42 @@ public class Solution_B {
             final int pivotIndex = partition(array, leftIndex, rightIndex);
             quicksort(array, leftIndex, pivotIndex);
             quicksort(array, pivotIndex + 1, rightIndex);
+        }
+    }
+
+    public static class Student implements Comparable<Student> {
+
+        private final String name;
+        private final int score;
+        private final int penalty;
+
+        public Student(String name, int score, int penalty) {
+            this.name = name;
+            this.score = score;
+            this.penalty = penalty;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public int compareTo(Student s) {
+            if (this.score > s.score) {
+                return -1;
+            }
+            if (this.score < s.score) {
+                return 1;
+            } else {
+                if (this.penalty < s.penalty) {
+                    return -1;
+                }
+                if (this.penalty > s.penalty) {
+                    return 1;
+                } else {
+                    return this.name.compareTo(s.getName());
+                }
+            }
         }
     }
 }
