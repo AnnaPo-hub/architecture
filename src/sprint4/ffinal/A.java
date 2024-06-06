@@ -12,27 +12,32 @@ import java.util.stream.Collectors;
 public class A {
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            final HashMap<Integer, List<Integer>> vocabulary =
+                    buildVocabulary(Integer.parseInt(reader.readLine()), reader);
 
-            final HashMap<Integer, List<Integer>> vocabulary = new HashMap<>();
 
-            final int documentQuantity = Integer.parseInt(reader.readLine());
-
-            for (int i = 0; i <= documentQuantity; i++) {
-                final List<String> document = readListOfString(reader);
-                for (String word : document) {
-
-                    final int hash = word.hashCode();
-                    if (vocabulary.containsKey(hash)) {
-                        vocabulary.get(hash).add(i);
-                    } else {
-                        ArrayList<Integer> objects = new ArrayList<>();
-                        objects.add(i);
-                        vocabulary.put(hash, objects);
-                    }
-                }
-            }
             System.out.println(vocabulary.entrySet());
         }
+    }
+
+
+    private static HashMap<Integer, List<Integer>> buildVocabulary(int documentQuantity, BufferedReader reader) throws IOException {
+        final HashMap<Integer, List<Integer>> vocabulary = new HashMap<>();
+        for (int i = 0; i <= documentQuantity; i++) {
+            final List<String> document = readListOfString(reader);
+            for (String word : document) {
+
+                final int hash = word.hashCode();
+                if (vocabulary.containsKey(hash)) {
+                    vocabulary.get(hash).add(++i);
+                } else {
+                    ArrayList<Integer> objects = new ArrayList<>();
+                    objects.add(++i);
+                    vocabulary.put(hash, objects);
+                }
+            }
+        }
+        return vocabulary;
     }
 
     private static List<String> readListOfString(BufferedReader reader) throws IOException {
