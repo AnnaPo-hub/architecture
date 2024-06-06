@@ -15,11 +15,8 @@ public class A {
             final int requestQuantity = Integer.parseInt(reader.readLine());
 
             for (int i = 0; i < requestQuantity; i++) {
-
-                getSortedResult(findThat(readListOfString(reader), vocabulary));
-
+                System.out.println(getSortedResult(findThat(readListOfString(reader), vocabulary)));
             }
-
         }
     }
 
@@ -34,14 +31,12 @@ public class A {
             } else {
                 checkedWord.add(currWord);
 
-                System.out.println("currWord is " + currWord);
+                //         System.out.println("currWord is " + currWord);
                 //   final List<Integer> listOfDocs = vocabulary.get(currWord.hashCode());
                 //получаем вхождения в документ [1, 2, 2],
                 final List<Integer> listOfDocs = vocabulary.get(currWord);
 
-                if (listOfDocs == null) {
-                    return null;
-                } else {
+                if (listOfDocs!=null) {
 
                     for (int i = 0; i < listOfDocs.size(); i++) {
                         if (occurrenceMap.containsKey(listOfDocs.get(i))) {
@@ -51,15 +46,14 @@ public class A {
                             occurrenceMap.put(listOfDocs.get(i), 1);
                         }
                     }
-                    System.out.println(
-                            occurrenceMap.entrySet()
-                    );
+                    //         System.out.println(
+                    //         occurrenceMap.entrySet());
                 }
-
             }
         }
         return occurrenceMap;
     }
+
 
     private static HashMap<String, List<Integer>> buildVocabulary(int documentQuantity, BufferedReader reader) throws IOException {
         final HashMap<String, List<Integer>> vocabulary = new HashMap<>();
@@ -78,12 +72,16 @@ public class A {
                 }
             }
         }
-        System.out.println(vocabulary.entrySet());
+        //      System.out.println(vocabulary.entrySet());
         return vocabulary;
     }
 
-    public static void getSortedResult(HashMap<Integer, Integer> resultMap) {
+    public static List<Map.Entry<Integer, Integer>> getSortedResult(HashMap<Integer, Integer> resultMap) {
 
+        return resultMap.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toList());
     }
 
     private static List<String> readListOfString(BufferedReader reader) throws IOException {
