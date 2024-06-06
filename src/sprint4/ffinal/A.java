@@ -13,7 +13,7 @@ public class A {
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 
-            final HashMap<String, List<Integer>> vocabulary = new HashMap<>();
+            final HashMap<Integer, List<Integer>> vocabulary = new HashMap<>();
 
             final int documentQuantity = Integer.parseInt(reader.readLine());
 
@@ -21,13 +21,13 @@ public class A {
                 final List<String> document = readListOfString(reader);
                 for (String word : document) {
 
-                  //  final int hash = word.hashCode();
-                    if (vocabulary.containsKey(word)) {
-                        vocabulary.get(word).add(i);
+                    final int hash = word.hashCode();
+                    if (vocabulary.containsKey(hash)) {
+                        vocabulary.get(hash).add(i);
                     } else {
                         ArrayList<Integer> objects = new ArrayList<>();
                         objects.add(i);
-                        vocabulary.put(word, objects);
+                        vocabulary.put(hash, objects);
                     }
                 }
             }
