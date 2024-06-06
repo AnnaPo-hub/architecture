@@ -3,10 +3,7 @@ package sprint4.ffinal;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class A {
@@ -19,15 +16,15 @@ public class A {
 
             for (int i = 0; i < requestQuantity; i++) {
 
-                findThat(readListOfString(reader), vocabulary);
+                getSortedResult(findThat(readListOfString(reader), vocabulary));
+
             }
 
         }
     }
 
-    private static List<Integer> findThat(List<String> request, HashMap<String, List<Integer>> vocabulary) {
+    private static HashMap<Integer, Integer> findThat(List<String> request, HashMap<String, List<Integer>> vocabulary) {
         final ArrayList<String> checkedWord = new ArrayList<>();
-        final ArrayList<Integer> result = new ArrayList<>();
 
         final HashMap<Integer, Integer> occurrenceMap = new HashMap<>();
 
@@ -38,7 +35,7 @@ public class A {
                 checkedWord.add(currWord);
 
                 System.out.println("currWord is " + currWord);
-             //   final List<Integer> listOfDocs = vocabulary.get(currWord.hashCode());
+                //   final List<Integer> listOfDocs = vocabulary.get(currWord.hashCode());
                 //получаем вхождения в документ [1, 2, 2],
                 final List<Integer> listOfDocs = vocabulary.get(currWord);
 
@@ -49,7 +46,7 @@ public class A {
                     for (int i = 0; i < listOfDocs.size(); i++) {
                         if (occurrenceMap.containsKey(listOfDocs.get(i))) {
                             final Integer integer = occurrenceMap.get(listOfDocs.get(i));
-                            occurrenceMap.put(listOfDocs.get(i), integer+ 1);
+                            occurrenceMap.put(listOfDocs.get(i), integer + 1);
                         } else {
                             occurrenceMap.put(listOfDocs.get(i), 1);
                         }
@@ -61,7 +58,7 @@ public class A {
 
             }
         }
-        return result;
+        return occurrenceMap;
     }
 
     private static HashMap<String, List<Integer>> buildVocabulary(int documentQuantity, BufferedReader reader) throws IOException {
@@ -83,6 +80,10 @@ public class A {
         }
         System.out.println(vocabulary.entrySet());
         return vocabulary;
+    }
+
+    public static void getSortedResult(HashMap<Integer, Integer> resultMap) {
+
     }
 
     private static List<String> readListOfString(BufferedReader reader) throws IOException {
