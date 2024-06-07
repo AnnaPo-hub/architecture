@@ -4,42 +4,44 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class HashTable<K, V> {
 
     private ArrayList<Node<K, V>> bucketArray;
     private int bucketQuantity;
-    private int size;
+    //  private int size;
 
-    private int hashCode(K key) {
-        return Objects.hashCode(key);
+
+    public HashTable(ArrayList<Node<K, V>> bucketArray, int bucketQuantity) {
+        this.bucketArray = bucketArray;
+        this.bucketQuantity = bucketQuantity;
+        //  this.size = size;
     }
+
 
     private int getIndex(K key) {
-        int hashCode = hashCode(key);
-        return hashCode % bucketQuantity;
+        return key.hashCode() % bucketQuantity;
     }
 
-    private void put(Node node) {
-
+    private void put(K key, V value) {
+        bucketArray.add(getIndex(key), new Node(key, value));
     }
 
-    private Integer get(Integer key) {
-//если не найден вернуть -1
-        return 0;
+    private V get(K key) {
+        int index = getIndex(key);
+        return bucketArray.get(index).getValue();
     }
 
-    private Integer delete(Integer key) {
-//вывести хранимое по данному ключу значение и удалить ключ  или -1
-        return 0;
+    private V delete(K key) {
+        int index = getIndex(key);
+        return bucketArray.remove(index).getValue();
     }
 
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             final int requestQuantity = Integer.parseInt(reader.readLine());
 
-            final HashTable<Integer, Integer> salaryHashTable = new HashTable<>();
+            final HashTable<Integer, Integer> salaryHashTable = new HashTable<>(new ArrayList<>(), 10);
 
             for (int i = 0; i < requestQuantity; i++) {
                 final String[] command = reader.readLine().trim().split(" ");
@@ -50,7 +52,7 @@ public class HashTable<K, V> {
                         //If -1 вывести None
                         break;
                     case "put":
-                        salaryHashTable.put(new Node<>(Integer.parseInt(command[1]), Integer.parseInt(command[1])));
+                        salaryHashTable.put(Integer.parseInt(command[1]), Integer.parseInt(command[1]));
                         break;
                     case "delete":
                         //if  -1, вывести None
@@ -70,5 +72,18 @@ public class HashTable<K, V> {
             this.key = key;
             this.value = value;
         }
+
+        public K getKey() {
+            return key;
+        }
+
+        public V getValue() {
+            return value;
+        }
+
+        public Node<K, V> getNextNode() {
+            return nextNode;
+        }
     }
+
 }
