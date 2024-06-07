@@ -12,51 +12,74 @@ public class HashTable<K, V> {
     //  private int size;
 
 
-    public HashTable(ArrayList<Node<K, V>> bucketArray, int bucketQuantity) {
-        this.bucketArray = bucketArray;
+    public HashTable(int bucketQuantity) {
+        bucketArray = new ArrayList<>();
         this.bucketQuantity = bucketQuantity;
-        //  this.size = size;
-    }
 
+        //заполняет бакеты null
+        for (int i = 0; i < bucketQuantity; i++) {
+            bucketArray.add(null);
+        }
+    }
 
     private int getIndex(K key) {
         return key.hashCode() % bucketQuantity;
     }
 
     private void put(K key, V value) {
+        int index = getIndex(key);
+        while (bucketArray.get(index) != null) {
+            index++;
+            index %= bucketQuantity;
+        }
         bucketArray.add(getIndex(key), new Node(key, value));
     }
 
     private V get(K key) {
         int index = getIndex(key);
-        return bucketArray.get(index).getValue();
+        while (bucketArray.get(index) != null) {
+            if (bucketArray.get(index).key == key)
+                return bucketArray.get(index).getValue();
+            index++;
+            index %= bucketQuantity;
+        }
+        return null;
     }
 
     private V delete(K key) {
         int index = getIndex(key);
-        return bucketArray.remove(index).getValue();
+        while (bucketArray.get(index) != null) {
+            if (bucketArray.get(index).key == key) {
+                Node<K, V> temp = bucketArray.get(index);
+                bucketArray.set(index, null);
+                return temp.getValue();
+            }
+            index++;
+            index %= bucketQuantity;
+        }
+        return null;
     }
 
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             final int requestQuantity = Integer.parseInt(reader.readLine());
 
-            final HashTable<Integer, Integer> salaryHashTable = new HashTable<>(new ArrayList<>(), 10);
+            final HashTable<Integer, Integer> salaryHashTable = new HashTable<>(113);
 
             for (int i = 0; i < requestQuantity; i++) {
                 final String[] command = reader.readLine().trim().split(" ");
 
                 switch (command[0]) {
                     case "get":
-                        salaryHashTable.get(Integer.parseInt(command[1]));
-                        //If -1 вывести None
+                        final Integer value = salaryHashTable.get(Integer.parseInt(command[1]));
+                        System.out.println(value == null ? "None" : value);
                         break;
                     case "put":
-                        salaryHashTable.put(Integer.parseInt(command[1]), Integer.parseInt(command[1]));
+                        salaryHashTable.put(Integer.parseInt(command[1]), Integer.parseInt(command[2]));
                         break;
                     case "delete":
-                        //if  -1, вывести None
-                        salaryHashTable.delete(Integer.parseInt(command[1]));
+                        final Integer deletedValue = salaryHashTable.delete(Integer.parseInt(command[1]));
+                        System.out.println(deletedValue == null ? "None" : deletedValue);
                         break;
                 }
             }
@@ -73,17 +96,8 @@ public class HashTable<K, V> {
             this.value = value;
         }
 
-        public K getKey() {
-            return key;
-        }
-
         public V getValue() {
             return value;
         }
-
-        public Node<K, V> getNextNode() {
-            return nextNode;
-        }
     }
-
 }
