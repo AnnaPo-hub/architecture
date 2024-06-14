@@ -11,7 +11,7 @@ package sprint4.ffinal;
 Выбор релевантных документов:
 В цикле проходим поисковые запросы, проходим каждое уникальное  слово,
 получаем данные из "словаря".
-Агрегируем данные по всем словам, сортируем данные в соответствии с указанной в задаче логикой релевантности и выводим результат.
+Агрегируем данные по всем словам, выбираем топ-5 в соответствие с указанной в задаче логикой релевантности и выводим результат.
 
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 Для хранения данных мы пользуемся  хеш-таблицами из стандартных библиотек, поэтому не сомневаемся в том, что найдем элемент по
@@ -21,16 +21,29 @@ package sprint4.ffinal;
 Поэтому мы можем быть уверены, что найдем именно те данные по количеству вхождений слова, которые положили в таблицу.
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-Сложность построения словаря -  О(n), где n количество слов по всем документам, которое в итоге внесем в таблицу.
-Эта часть выполняется однократно.
-Сложность поиска  в среднем  - О(L), где L количество слов в запросе.
-Итоговая сложность: O(1)
+A - Сложность получается путем выполнения m (количество запросов) операций A,B . O(m*n)+m*n)=O(m*n). Где
+	m - количество запросов
+	n - количество проиндексированных документов, то есть количество документов поданных на вход программы в первой части
+B - Получение слова из словаря - 0(1), получение для всех слов запроса, O(k) - k среднее количество слов в запросе.
+	Слияние данных в итоговом массиве проводится для каждого слова из запроса  O(k*n), где n-количество проиндексированных
+	документов (документ = строка из нескольких слов)
+	0(k+k*n) = 0(k*(1+n)) = 0(k*n)
+
+C - получение максимального значения выполняется за O(n), где n-количество проиндексированных документов
+ (документ = строка из нескольких слов). В индексе всегда все документы.
+ Тут НЕ имеется ввиду документы, в которых найдены слова из запроса.
+ Получение максимального значения выполняется по структуре содержащей (номер документ; количество вхождений всех
+ слов запроса в этот документов)
+ Получение первых пяти - 5*O(n), что мы приравниваем к O(n)
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
-O(n)  памяти, где n - это количество использованных ключей в хэш-таблице, то есть количество слов в "словаре"
+Общая память для всех запросов:
+O(n)  памяти, где n - это количество использованных ключей, то есть количество уникальных слов во всех документах.
+Память для одного запроса:
+O(k)*O(L)- k - количество уникальных слов в запросе. L- количество документов.
 
 --ID успешной посылки--
-https://contest.yandex.ru/contest/24414/run-report/115048412/
+https://contest.yandex.ru/contest/24414/run-report/115117154/
      */
 
 import java.io.*;
@@ -47,14 +60,11 @@ public class A {
             final int requestQuantity = Integer.parseInt(reader.readLine());
             for (int i = 0; i < requestQuantity; i++) {
                 String request = reader.readLine();
-                String requestResult = "";
+                StringBuilder requestResult = new StringBuilder();
 
-                List<Map.Entry<Integer, Integer>> res = getSortedResult(search(readSetOfString(request), vocabulary));
-                for (int j = 0; j < Math.min(5, res.size()); j++) {
-                    Map.Entry<Integer, Integer> entry = res.get(j);
-                    requestResult = requestResult + entry.getKey() + " ";
-                }
-                writer.write(requestResult);
+                List<Map.Entry<Integer, Integer>> res = getTop5Result2(search(readSetOfString(request), vocabulary));
+                res.forEach(entry -> requestResult.append(entry.getKey()).append(" "));
+                writer.write(requestResult.toString());
                 writer.newLine();
             }
         }
@@ -88,12 +98,29 @@ public class A {
         return vocabulary;
     }
 
-    public static List<Map.Entry<Integer, Integer>> getSortedResult(HashMap<Integer, Integer> resultMap) {
+    public static List<Map.Entry<Integer, Integer>> getTop5Result(HashMap<Integer, Integer> resultMap) {
         return resultMap.entrySet()
                 .stream()
                 .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()) == 0 ?
                         o1.getKey().compareTo(o2.getKey()) : (o2.getValue().compareTo(o1.getValue())))
+                .limit(5)
                 .collect(Collectors.toList());
+    }
+
+
+    public static List<Map.Entry<Integer, Integer>> getTop5Result2(HashMap<Integer, Integer> resultMap) {
+
+        List<Map.Entry<Integer, Integer>> result = new ArrayList<>();
+
+        for (int i = 0; i < 5 && !resultMap.isEmpty(); ++i) {
+            Optional<Map.Entry<Integer, Integer>> maxValue = resultMap.entrySet().stream().min((o1, o2) -> o2.getValue().compareTo(o1.getValue()) == 0 ?
+                    o1.getKey().compareTo(o2.getKey()) : (o2.getValue().compareTo(o1.getValue())));
+            if (maxValue.isPresent()) {
+                result.add(maxValue.get());
+                resultMap.remove(maxValue.get().getKey());
+            }
+        }
+        return result;
     }
 
     private static List<String> readListOfString(BufferedReader reader) throws IOException {

@@ -7,29 +7,34 @@ import java.io.InputStreamReader;
 class D {
     long hash_value;
 
-    D(String st, int p, int m) {
+    D(String st, long p, long m) {
         long hash_so_far = 0;
         final char[] s = st.toCharArray();
-        long p_pow = 1;
         final int n = s.length;
-        for (int i = 0; i < n; i++) {
-            hash_so_far = (long) ((hash_so_far + (int) s[i] * Math.pow(p, n - (i + 1))) % m);
-            p_pow = (p_pow * p) % m;
+        long a = 1;
+        for (int i = n; i > 0; --i) {
+            long ch = (long) s[i - 1];
+            hash_so_far = (hash_so_far + ch * a) % m;
+            a = a * p % m;
         }
-        hash_value = hash_so_far;
+        hash_value = hash_so_far % m;
     }
 }
 
 class Main {
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
-            final int base = Integer.parseInt(reader.readLine()); //основание, по которому считается хеш
-            final int mod = Integer.parseInt(reader.readLine()); //модуль, то, на что будем делить
-
+            final long base = Long.parseLong(reader.readLine()); //основание, по которому считается хеш
+            final long mod = Long.parseLong(reader.readLine()); //модуль, то, на что будем делить
             String s = reader.readLine();
-            D h = new D(s, base, mod);
-            System.out.println(h.hash_value);
+            String s2 = reader.readLine();
+
+
+
+               D h = new D(s, base, mod);
+              System.out.println(h.hash_value);
+
+
         }
     }
 }
-
