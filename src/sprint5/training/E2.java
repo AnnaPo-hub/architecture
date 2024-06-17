@@ -2,7 +2,6 @@ package sprint5.training;
 
 public class E2 {
     public static boolean treeSolution(Node head) {
-
         return isSearchTree(head);
     }
 
@@ -11,17 +10,12 @@ public class E2 {
                 head.left != null && head.left.value < head.value) {
             return isSearchTree(head.right) && isSearchTree(head.left);
         } else if (head.left != null && head.left.value < head.value) {
-            return !hasChildren(head.left);
+            return isSearchTree(head.left);
         } else if (head.right != null && head.right.value > head.value) {
-            return !hasChildren(head.right);
+            return isSearchTree(head.right);
         } else {
             return true;
         }
-    }
-
-    public static boolean hasChildren(Node head) {
-
-        return head.left != null || head.right != null;
     }
 
     // <template>
@@ -38,18 +32,13 @@ public class E2 {
         // <template>
     }
 
-    private static void test() {
-        Node node0 = new Node(1);
+    public static void main(String[] args) {
+        Node node0 = new Node(2);
         Node node1 = new Node(1);
-        Node node2 = new Node(-5);
-        Node node3 = new Node(3);
-        node3.left = node1;
-        node3.right = node2;
-        Node node4 = new Node(10);
-        Node node5 = new Node(2);
-        node5.left = node3;
-        node5.right = node4;
-        assert treeSolution(node5);
+        Node node2 = new Node(3);
+        node0.left = node1;
+        node0.right = node2;
+        System.out.println(treeSolution(node0));
     }
 }
 
