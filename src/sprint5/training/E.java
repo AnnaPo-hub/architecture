@@ -1,30 +1,35 @@
 package sprint5.training;
 
-public class E2 {
+public class E {
     public static boolean treeSolution(Node head) {
-        return isSearchTree(head, 1, Integer.MAX_VALUE);
+        return isSearchTree(head, Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     public static boolean isSearchTree(Node head, int minValue, int maxValue) {
+        //проверяем, что нода попадает в условие
+        if (head.value >= maxValue ||
+                head.value <= minValue) {
+            return false;
+        }
+
         if ((head.right != null && head.left != null)) {
-            if (head.right.value <= head.value || head.left.value >= head.value ||
-                    head.value > maxValue ||
-                    head.value < minValue) {
+            if (head.right.value <= head.value || head.left.value >= head.value) {
                 return false;
+
             } else if (head.right.value > head.value && head.left.value < head.value) {
-                return isSearchTree(head.right, head.value, maxValue ) &&
-                        isSearchTree(head.left, minValue , head.value);
+                return isSearchTree(head.right, head.value, maxValue) &&
+                        isSearchTree(head.left, minValue, head.value);
             }
         } else if (head.left != null) {
-            if (head.left.value < head.value && head.left.value < maxValue) {
-                return isSearchTree(head.left, head.value, maxValue);
+            if (head.left.value < head.value) {
+                return isSearchTree(head.left, minValue, head.value);
             } else {
                 return false;
             }
 
         } else if (head.right != null) {
-            if (head.right.value > head.value && head.right.value > minValue) {
-                return isSearchTree(head.right, minValue, head.value);
+            if (head.right.value > head.value) {
+                return isSearchTree(head.right, head.value, maxValue);
             } else {
                 return false;
             }
