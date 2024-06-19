@@ -1,6 +1,6 @@
 package sprint5.training;
 
-public class SolutionD {
+public class D {
     public static boolean treeSolution(Node head1, Node head2) {
         // Your code
         return compareTrees(head1, head2);
