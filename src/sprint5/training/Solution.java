@@ -26,6 +26,7 @@ public class Solution {
             indexSmall = right;
         }
 
+        //меняем местами элементы, если меньший по значению потомок больше чем корень
         if (heap[indexSmall] < heap[index]) {
             int temp = heap[index];
             heap[index]= heap[indexSmall];
