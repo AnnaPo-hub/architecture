@@ -6,22 +6,16 @@ public class F {
     }
 
     public static int getLongestWay(Node head) {
-        int longestWay = 1;
-        if(head.right!=null&&head.left!=null){
-            longestWay++;
-            getLongestWay(head.right);
-            getLongestWay(head.left);
-        }
+        if (head.left == null && head.right == null) {
+            return 1;
 
-        if(head.right!=null&&head.left==null){
-            longestWay++;
-            getLongestWay(head.right);
+        } else if (head.left != null && head.right == null) {
+            return 1 + getLongestWay(head.left);
+        } else if (head.left == null && head.right != null) {
+            return 1 + getLongestWay(head.right);
+        } else {
+            return 1 + Math.max(getLongestWay(head.left), getLongestWay(head.right));
         }
-        if(head.left!=null&&head.right==null){
-            longestWay++;
-            getLongestWay(head.left);
-        }
-        return ++longestWay;
     }
 
     // <template>
@@ -41,16 +35,15 @@ public class F {
             this.left = left;
             this.right = right;
         }
+
     }
     // <template>
 
     public static void main(String[] args) {
-        Node node3 = new Node(2, null, null);
+        Node node3 = new Node(1, null, null);
+        Node node2 = new Node(2, node3, null);
+        Node node1 = new Node(1, node2, null);
 
-        Node node1 = new Node(1, null, null);
-        Node node2 = new Node(2, null, node3);
-        Node node0 = new Node(1, node1, node2);
-
-        System.out.println(treeSolution(node0));
+        System.out.println(treeSolution(node1));
     }
 }
