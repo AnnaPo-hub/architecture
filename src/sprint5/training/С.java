@@ -1,6 +1,6 @@
 package sprint5.training;
 
-public class SolutionC {
+public class С {
     public static boolean treeSolution(Node head) {
         if (head.left != null && head.right != null) {
             return compareTrees(head.left, head.right);

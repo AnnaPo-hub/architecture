@@ -1,6 +1,6 @@
 package sprint5.training;
 
-public class Solution {
+public class SolutionL {
     /*
     Функция принимает в качестве аргументов массив,
      в котором хранятся элементы кучи, и индекс элемента,
