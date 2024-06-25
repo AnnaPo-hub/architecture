@@ -1,6 +1,6 @@
 package sprint5.training;
 
-public class SolutionL {
+public class L {
     /*
     Функция принимает в качестве аргументов массив,
      в котором хранятся элементы кучи, и индекс элемента,
@@ -18,22 +18,32 @@ public class SolutionL {
         if (left >= heap.length) {
             return index;
         }
+        // есть левый элемент, а правого нет, но левый меньше или равен текущему
+        if ((left < heap.length) && heap[left] <= heap[index] && right >= heap.length ) {
+            return index;
+        }
+        // есть левый элемент и правого нет, но левый и оба они равны текущему
+        if ((left < heap.length) && right < heap.length && heap[left] <= heap[index] && heap[right] <= heap[index]) {
+            return index;
+        }
 
+        // в данной точке мы точно знаем, что есть как миниму левый узел со значение больше корня
+        int indexLargest = left;
         // проверяем, что есть оба дочерних узла и присваиваеи меньшее значение
-        //переменной  indexSmall
-        int indexSmall = left;
-        if (right < heap.length && heap[right] < heap[left]) {
-            indexSmall = right;
+        //переменной  indexLargest
+        if (right < heap.length && heap[right] > heap[left]) {
+            indexLargest = right;
         }
 
-        //меняем местами элементы, если меньший по значению потомок больше чем корень
-        if (heap[indexSmall] < heap[index]) {
+        //меняем местами элементы, если больший по значению потомок больше чем корень
+        if (heap[indexLargest] > heap[index]) {
             int temp = heap[index];
-            heap[index]= heap[indexSmall];
-            heap[indexSmall]= heap [temp];
-            siftDown(heap, indexSmall);
+            heap[index] = heap[indexLargest];
+            heap[indexLargest] = temp;
         }
-        return indexSmall;
+
+        return siftDown(heap, indexLargest);
+
     }
 
     private static void test() {
