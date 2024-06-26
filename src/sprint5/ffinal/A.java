@@ -39,6 +39,13 @@ public class A {
         heap[index] = participant;
     }
 
+    public Participant remove(){
+        Participant participant = heap[1];
+        heap[1] = heap[--currentSize];
+        siftDown(1);
+        return participant;
+    }
+
     public void displayArray() {
         for (int i = 1; i < maxSize; i++) {
             System.out.print(heap[i].getName() + " ");
@@ -128,16 +135,23 @@ public class A {
                         Integer.parseInt(currentParticipant[2])), i);
             }
 
+            //TODO метод для дебага, убрать
+            heap.displayArray();
+
+            //оформляем массив  партисипантов в пирамиду
             for (j = participantNumber / 2 ; j >= 1; j--) {
                 heap.siftDown(j);
+            }
+
+            //извлекаем лучшего партисипанта, складываем его в конец массива и снова делаем просеивание
+            for ( j = participantNumber-1; j >=0; j--) {
+                Participant highestParticipant = heap.remove();
+                heap.insert(highestParticipant, j );
             }
 
 
             //TODO метод для дебага, убрать
             heap.displayArray();
-
-            System.out.println(" Heap: ");
-            heap.displayHeap();
         }
     }
 
