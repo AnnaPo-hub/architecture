@@ -23,15 +23,10 @@ import java.io.*;
 
 public class A {
     private Participant[] heap;
-
-    //TODO переменные для дебага, убрать
-    private int maxSize;
     private int currentSize;
-
 
     public A(int size) {
         this.heap = new Participant[size + 1];
-        maxSize = size + 1;
         currentSize = 0;
     }
 
@@ -39,50 +34,11 @@ public class A {
         heap[index] = participant;
     }
 
-    public Participant remove(){
+    public Participant remove() {
         Participant participant = heap[1];
         heap[1] = heap[currentSize--];
         siftDown(1);
         return participant;
-    }
-
-    public void displayArray() {
-        for (int i = 1; i < maxSize; i++) {
-            System.out.print(heap[i].getName() + " ");
-            System.out.println("");
-        }
-    }
-
-    public void displayHeap() {
-        int nBlanks = 32;
-        int itemPerRow = 1;
-        int column = 0;
-        int j = 0;
-        String dots = ".....................";
-        System.out.println(dots + dots);
-
-        while (currentSize > 0) {
-            if (column == 0)
-                for (int k = 0; k < nBlanks; k++) {
-                    System.out.print(" ");
-
-                    System.out.print(heap[j].getName());
-
-                    if (++j == currentSize)
-                        break;
-                    if (++column == itemPerRow) {
-                        nBlanks /= 2;
-                        itemPerRow *= 2;
-                        column = 0;
-                        System.out.println();
-                    } else
-
-                        for (int l = 0; l < nBlanks * 2 - 2; k = l++) {
-                            System.out.print(" ");
-                        }
-                    System.out.println("\n " + dots + dots);
-                }
-        }
     }
 
     public void siftDown(int index) {
@@ -92,15 +48,15 @@ public class A {
         int right = 2 * index + 1;
 
         // Нет дочерних узлов, элемент не с кем просеивать
-        if (left >= heap.length-1) {
+        if (left >= heap.length - 1) {
             return;
         }
         // есть левый элемент, а правого нет, но левый меньше или равен текущему
-        if ((left < heap.length-1) && heap[left].compareTo(heap[index]) <= 0 && right >= heap.length) {
+        if ((left < heap.length - 1) && heap[left].compareTo(heap[index]) <= 0 && right >= heap.length) {
             return;
         }
         //если есть левый и правый элемент и оба они меньше или равны текущему
-        if ((left < heap.length-1) && right < heap.length-1 && heap[left].compareTo(heap[index]) <= 0 && heap[right].compareTo(heap[index]) <= 0) {
+        if ((left < heap.length - 1) && right < heap.length - 1 && heap[left].compareTo(heap[index]) <= 0 && heap[right].compareTo(heap[index]) <= 0) {
             return;
         }
 
@@ -127,7 +83,7 @@ public class A {
             final int participantNumber = Integer.parseInt(reader.readLine());
             int j;
 
-            final A heap = new A(participantNumber+1);
+            final A heap = new A(participantNumber + 1);
 
             for (int i = 1; i < participantNumber + 1; i++) {
                 final String[] currentParticipant = reader.readLine().trim().split(" ");
@@ -136,29 +92,21 @@ public class A {
                 ++heap.currentSize;
             }
 
-            //TODO метод для дебага, убрать
-           // heap.displayArray();
-
             //просеиваем вниз  массив  партисипантов
-            for (j = participantNumber / 2 ; j >= 1; j--) {
+            for (j = participantNumber / 2; j >= 1; j--) {
                 heap.siftDown(j);
             }
 
             //извлекаем лучшего партисипанта, складываем его в конец массива и снова делаем просеивание
-            for ( j = participantNumber+1; j >=0; j--) {
+            for (j = participantNumber + 1; j > 1; j--) {
                 Participant highestParticipant = heap.remove();
                 System.out.println(highestParticipant.name);
-                heap.insert(highestParticipant, j );
+                heap.insert(highestParticipant, j);
             }
-
-
-            //TODO метод для дебага, убрать
-           // heap.displayArray();
         }
     }
 
     public static class Participant implements Comparable<Participant> {
-
         private final String name;
         private final int score;
         private final int penalty;
