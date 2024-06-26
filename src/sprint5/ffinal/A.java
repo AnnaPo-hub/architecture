@@ -41,7 +41,7 @@ public class A {
 
     public Participant remove(){
         Participant participant = heap[1];
-        heap[1] = heap[--currentSize];
+        heap[1] = heap[currentSize--];
         siftDown(1);
         return participant;
     }
@@ -99,7 +99,7 @@ public class A {
         if ((left < heap.length-1) && heap[left].compareTo(heap[index]) <= 0 && right >= heap.length) {
             return;
         }
-        // есть левый элемент и правого нет, но левый и оба они равны текущему
+        //если есть левый и правый элемент и оба они меньше или равны текущему
         if ((left < heap.length-1) && right < heap.length-1 && heap[left].compareTo(heap[index]) <= 0 && heap[right].compareTo(heap[index]) <= 0) {
             return;
         }
@@ -127,31 +127,33 @@ public class A {
             final int participantNumber = Integer.parseInt(reader.readLine());
             int j;
 
-            final A heap = new A(participantNumber);
+            final A heap = new A(participantNumber+1);
 
             for (int i = 1; i < participantNumber + 1; i++) {
                 final String[] currentParticipant = reader.readLine().trim().split(" ");
                 heap.insert(new Participant(currentParticipant[0], Integer.parseInt(currentParticipant[1]),
                         Integer.parseInt(currentParticipant[2])), i);
+                ++heap.currentSize;
             }
 
             //TODO метод для дебага, убрать
-            heap.displayArray();
+           // heap.displayArray();
 
-            //оформляем массив  партисипантов в пирамиду
+            //просеиваем вниз  массив  партисипантов
             for (j = participantNumber / 2 ; j >= 1; j--) {
                 heap.siftDown(j);
             }
 
             //извлекаем лучшего партисипанта, складываем его в конец массива и снова делаем просеивание
-            for ( j = participantNumber-1; j >=0; j--) {
+            for ( j = participantNumber+1; j >=0; j--) {
                 Participant highestParticipant = heap.remove();
+                System.out.println(highestParticipant.name);
                 heap.insert(highestParticipant, j );
             }
 
 
             //TODO метод для дебага, убрать
-            heap.displayArray();
+           // heap.displayArray();
         }
     }
 

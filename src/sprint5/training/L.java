@@ -22,7 +22,7 @@ public class L {
         if ((left < heap.length) && heap[left] <= heap[index] && right >= heap.length ) {
             return index;
         }
-        // есть левый элемент и правого нет, но левый и оба они равны текущему
+        //если есть левый и правый элемент и оба они менше ил равны текущему
         if ((left < heap.length) && right < heap.length && heap[left] <= heap[index] && heap[right] <= heap[index]) {
             return index;
         }
