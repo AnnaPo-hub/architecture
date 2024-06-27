@@ -5,7 +5,10 @@ package sprint5.ffinal;
 Используемая структура данных : массив
 
 Читаем данные из инпута построчно, создаем объекты Participant и вставляем в массив в порядке получения.
-Затем преобразуем массив в пирамиду при помощи просеивания вниз.
+Затем преобразуем массив в пирамиду при помощи просеивания вниз. Наверху оказывается нужный нам  лучший партисипант.
+Переносим лучшего партисипанта в конец массива, начав заполнение отсортированного массива.
+Затем снова просеиваем кучу и получаем в корне лучшего участника. Итд , пока не получим, начиная с 1-ой ячейки,
+отсортированный по возрастанию массив.
 
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 
@@ -37,6 +40,7 @@ public class A {
     public Participant remove() {
         Participant participant = heap[1];
         heap[1] = heap[currentSize--];
+        //TODO heap[currentSize] = null чтобы убить там участника, котоого уже выше перенесли до этого
         siftDown(1);
         return participant;
     }
@@ -56,7 +60,7 @@ public class A {
             return;
         }
         //если есть левый и правый элемент и оба они меньше или равны текущему
-        if ((left < heap.length - 1) && right < heap.length - 1 && heap[left].compareTo(heap[index]) <= 0 && heap[right].compareTo(heap[index]) <= 0) {
+        if ((left < heap.length - 1) && right < heap.length - 1 && heap[index].compareTo(heap[left]) >= 0 && heap[index].compareTo(heap[right]) >= 0) {
             return;
         }
 
@@ -136,6 +140,7 @@ public class A {
                 if (this.penalty > s.penalty) {
                     return -1;
                 } else {
+                    System.out.println("comparing names return "+ this.name.compareTo(s.getName()));
                     return this.name.compareTo(s.getName());
                 }
             }
