@@ -40,6 +40,7 @@ public class A {
     public Participant remove() {
         Participant participant = heap[1];
         heap[1] = heap[currentSize--];
+        //System.out.println("переместили в корень " + heap[1].getName());
         //TODO heap[currentSize] = null чтобы убить там участника, котоого уже выше перенесли до этого
         siftDown(1);
         return participant;
@@ -50,7 +51,6 @@ public class A {
         //потомки вершины, от которой нужно сделать просеивание
         int left = 2 * index;
         int right = 2 * index + 1;
-
         // Нет дочерних узлов, элемент не с кем просеивать
         if (left >= heap.length - 1) {
             return;
@@ -77,13 +77,14 @@ public class A {
             Participant temp = heap[index];
             heap[index] = heap[indexLargest];
             heap[indexLargest] = temp;
+            //todo
+            //System.out.println(heap[indexLargest].getName() + "поменялись местами с " + heap[index].getName());
         }
     }
 
 
     public static void main(String[] args) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             final int participantNumber = Integer.parseInt(reader.readLine());
             int j;
 
@@ -97,7 +98,7 @@ public class A {
             }
 
             //просеиваем вниз  массив  партисипантов
-            for (j = participantNumber / 2; j >= 1; j--) {
+            for (j = ((participantNumber + 1) / 2 - 1); j >= 1; j--) {
                 heap.siftDown(j);
             }
 
@@ -140,7 +141,8 @@ public class A {
                 if (this.penalty > s.penalty) {
                     return -1;
                 } else {
-                    System.out.println("comparing names return "+ this.name.compareTo(s.getName()));
+                    //TODO
+                  //  System.out.println("comparing names return " + this.name.compareTo(s.getName()));
                     return this.name.compareTo(s.getName());
                 }
             }
