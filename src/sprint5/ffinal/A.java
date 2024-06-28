@@ -27,58 +27,73 @@ import java.io.*;
 public class A {
     private Participant[] heap;
     private int currentSize;
+    private  int maxSize;
 
     public A(int size) {
-        this.heap = new Participant[size + 1];
+        maxSize = size;
+        heap = new Participant[maxSize];
         currentSize = 0;
     }
 
-    public void insert(Participant participant, int index) {
+    public void addParticipant(Participant participant, int index) {
         heap[index] = participant;
     }
 
-    public Participant remove() {
-        Participant participant = heap[1];
-        heap[1] = heap[currentSize--];
-        //System.out.println("переместили в корень " + heap[1].getName());
-        //TODO heap[currentSize] = null чтобы убить там участника, котоого уже выше перенесли до этого
-        siftDown(1);
+    public Participant delete() {
+        Participant participant = heap[0];
+        heap[0] = heap[--currentSize];
+        //TODO
+       // System.out.println("переместили в корень " + heap[1].getName());
+            siftDown(0);
+
         return participant;
     }
 
+    private void increaseSize(){
+        currentSize++;
+    }
+
     public void siftDown(int index) {
-        // Your code
-        //потомки вершины, от которой нужно сделать просеивание
-        int left = 2 * index;
-        int right = 2 * index + 1;
-        // Нет дочерних узлов, элемент не с кем просеивать
-        if (left >= heap.length - 1) {
-            return;
-        }
-        // есть левый элемент, а правого нет, но левый меньше или равен текущему
-        if ((left < heap.length - 1) && heap[left].compareTo(heap[index]) <= 0 && right >= heap.length) {
-            return;
-        }
-        //если есть левый и правый элемент и оба они меньше или равны текущему
-        if ((left < heap.length - 1) && right < heap.length - 1 && heap[index].compareTo(heap[left]) >= 0 && heap[index].compareTo(heap[right]) >= 0) {
-            return;
-        }
+        int indexLargest;
+        Participant root = heap[index];
 
-        // в данной точке мы точно знаем, что есть как миниму левый узел со значение больше корня
-        int indexLargest = left;
-        // проверяем, что есть оба дочерних узла и присваиваеи большее  значение
-        //переменной  indexLargest
-        if (right < heap.length && heap[right].compareTo(heap[left]) > 0) {
-            indexLargest = right;
-        }
+        while (index< currentSize/2) {
 
-        //меняем местами элементы, если больший по значению потомок больше чем корень
-        if (heap[indexLargest].compareTo(heap[index]) > 0) {
-            Participant temp = heap[index];
-            heap[index] = heap[indexLargest];
-            heap[indexLargest] = temp;
-            //todo
-            //System.out.println(heap[indexLargest].getName() + "поменялись местами с " + heap[index].getName());
+            //потомки вершины, от которой нужно сделать просеивание
+            int left = 2 * index + 1;
+            int right = left + 1;
+
+            // Нет дочерних узлов, элемент не с кем просеивать
+            if (left >= heap.length) {
+                return;
+            }
+            // есть левый элемент, а правого нет, но левый меньше или равен текущему
+            if ((left < heap.length) && heap[left].compareTo(heap[index]) <= 0 && right >= heap.length) {
+                return;
+            }
+            //если есть левый и правый элемент и оба они меньше или равны текущему
+            if ((left < heap.length) && right < heap.length  && heap[index].compareTo(heap[left]) >= 0 && heap[index].compareTo(heap[right]) >= 0) {
+                return;
+            }
+
+            // в данной точке мы точно знаем, что есть как миниму левый узел со значение больше корня
+              indexLargest = left;
+            // проверяем, что есть оба дочерних узла и присваиваеи большее  значение
+            //переменной  indexLargest
+            if (right < heap.length && heap[right].compareTo(heap[left]) > 0) {
+                indexLargest = right;
+            }
+
+            //меняем местами элементы, если больший по значению потомок больше чем корень
+            if (heap[indexLargest].compareTo(heap[index]) > 0) {
+
+                heap[index] = heap[indexLargest];
+                index = indexLargest;
+
+                //todo
+              //  System.out.println(heap[indexLargest].getName() + "поменялись местами с " + heap[index].getName());
+            }
+            heap[indexLargest] = root;
         }
     }
 
@@ -88,25 +103,28 @@ public class A {
             final int participantNumber = Integer.parseInt(reader.readLine());
             int j;
 
-            final A heap = new A(participantNumber + 1);
+            final A heap = new A(participantNumber);
 
-            for (int i = 1; i < participantNumber + 1; i++) {
+            for (int i = 0; i < participantNumber; i++) {
                 final String[] currentParticipant = reader.readLine().trim().split(" ");
-                heap.insert(new Participant(currentParticipant[0], Integer.parseInt(currentParticipant[1]),
+                heap.addParticipant(new Participant(currentParticipant[0], Integer.parseInt(currentParticipant[1]),
                         Integer.parseInt(currentParticipant[2])), i);
-                ++heap.currentSize;
+                heap.increaseSize();
             }
 
             //просеиваем вниз  массив  партисипантов
-            for (j = ((participantNumber + 1) / 2 - 1); j >= 1; j--) {
+            for (j = participantNumber/ 2 - 1; j >= 0; j--) {
                 heap.siftDown(j);
             }
 
             //извлекаем лучшего партисипанта, складываем его в конец массива и снова делаем просеивание
-            for (j = participantNumber + 1; j > 1; j--) {
-                Participant highestParticipant = heap.remove();
+            for (j = participantNumber-1; j >= 0; j--) {
+                Participant highestParticipant = heap.delete();
                 System.out.println(highestParticipant.name);
-                heap.insert(highestParticipant, j);
+
+                heap.addParticipant(highestParticipant, j);
+                //TODO
+               // System.out.println(highestParticipant.name + "inserted at index " + j);
             }
         }
     }
