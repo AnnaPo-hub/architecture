@@ -27,7 +27,7 @@ import java.io.*;
 public class A {
     private Participant[] heap;
     private int currentSize;
-    private  int maxSize;
+    private int maxSize;
 
     public A(int size) {
         maxSize = size;
@@ -43,13 +43,13 @@ public class A {
         Participant participant = heap[0];
         heap[0] = heap[--currentSize];
         //TODO
-       // System.out.println("переместили в корень " + heap[1].getName());
-            siftDown(0);
+        // System.out.println("переместили в корень " + heap[1].getName());
+        siftDown(0);
 
         return participant;
     }
 
-    private void increaseSize(){
+    private void increaseSize() {
         currentSize++;
     }
 
@@ -57,7 +57,7 @@ public class A {
         int indexLargest;
         Participant root = heap[index];
 
-        while (index< currentSize/2) {
+        while (index < currentSize / 2) {
 
             //потомки вершины, от которой нужно сделать просеивание
             int left = 2 * index + 1;
@@ -72,12 +72,12 @@ public class A {
                 return;
             }
             //если есть левый и правый элемент и оба они меньше или равны текущему
-            if ((left < heap.length) && right < heap.length  && heap[index].compareTo(heap[left]) >= 0 && heap[index].compareTo(heap[right]) >= 0) {
+            if ((left < heap.length) && right < heap.length && heap[index].compareTo(heap[left]) >= 0 && heap[index].compareTo(heap[right]) >= 0) {
                 return;
             }
 
             // в данной точке мы точно знаем, что есть как миниму левый узел со значение больше корня
-              indexLargest = left;
+            indexLargest = left;
             // проверяем, что есть оба дочерних узла и присваиваеи большее  значение
             //переменной  indexLargest
             if (right < heap.length && heap[right].compareTo(heap[left]) > 0) {
@@ -91,7 +91,7 @@ public class A {
                 index = indexLargest;
 
                 //todo
-              //  System.out.println(heap[indexLargest].getName() + "поменялись местами с " + heap[index].getName());
+                //  System.out.println(heap[indexLargest].getName() + "поменялись местами с " + heap[index].getName());
             }
             heap[indexLargest] = root;
         }
@@ -113,18 +113,15 @@ public class A {
             }
 
             //просеиваем вниз  массив  партисипантов
-            for (j = participantNumber/ 2 - 1; j >= 0; j--) {
+            for (j = participantNumber / 2 - 1; j >= 0; j--) {
                 heap.siftDown(j);
             }
 
             //извлекаем лучшего партисипанта, складываем его в конец массива и снова делаем просеивание
-            for (j = participantNumber-1; j >= 0; j--) {
+            for (j = participantNumber - 1; j >= 0; j--) {
                 Participant highestParticipant = heap.delete();
                 System.out.println(highestParticipant.name);
-
                 heap.addParticipant(highestParticipant, j);
-                //TODO
-               // System.out.println(highestParticipant.name + "inserted at index " + j);
             }
         }
     }
@@ -145,23 +142,14 @@ public class A {
         }
 
         @Override
-        //TODO доделать поправить -1 как было в ревью во втором спринте
         public int compareTo(Participant s) {
-            if (this.score > s.score) {
-                return 1;
-            }
-            if (this.score < s.score) {
-                return -1;
+            if (this.score != s.score) {
+                return this.score - s.score;
             } else {
-                if (this.penalty < s.penalty) {
-                    return 1;
-                }
-                if (this.penalty > s.penalty) {
-                    return -1;
+                if (this.penalty != s.penalty) {
+                    return s.penalty - this.penalty;
                 } else {
-                    //TODO
-                  //  System.out.println("comparing names return " + this.name.compareTo(s.getName()));
-                    return this.name.compareTo(s.getName());
+                    return s.getName().compareTo(this.name);
                 }
             }
         }
