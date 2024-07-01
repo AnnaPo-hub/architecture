@@ -42,8 +42,6 @@ public class A {
     public Participant delete() {
         Participant participant = heap[0];
         heap[0] = heap[--currentSize];
-        //TODO
-        // System.out.println("переместили в корень " + heap[1].getName());
         siftDown(0);
 
         return participant;
@@ -89,9 +87,6 @@ public class A {
 
                 heap[index] = heap[indexLargest];
                 index = indexLargest;
-
-                //todo
-                //  System.out.println(heap[indexLargest].getName() + "поменялись местами с " + heap[index].getName());
             }
             heap[indexLargest] = root;
         }
