@@ -5,21 +5,26 @@ package sprint5.ffinal;
 Используемая структура данных : массив
 
 Читаем данные из инпута построчно, создаем объекты Participant и вставляем в массив в порядке получения.
-Затем преобразуем массив в пирамиду при помощи просеивания вниз. Наверху оказывается нужный нам  лучший партисипант.
-Переносим лучшего партисипанта в конец массива, начав заполнение отсортированного массива.
+Затем преобразуем массив в пирамиду при помощи просеивания вниз. Наверху оказывается нужный нам  лучший участник.
+Переносим лучшего участника в конец массива, начав с конца массива заполнять отсортированные  данные.
 Затем снова просеиваем кучу и получаем в корне лучшего участника. Итд , пока не получим, начиная с 1-ой ячейки,
 отсортированный по возрастанию массив.
 
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
-
+Если мы идем снизу пирамиды, применяя метод просеивания вниз к каждой подпирамиде , то в итоге получаем нужный нам
+самый большой элемент наверху пирамиды.
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-
+Методы add и delete выполняются за O(log n), каждый из них выполняется n раз, где n - количество участников,
+которое мы получаем на вход в качестве параметра
+Получаем итоговую временную сложность : O(n log n)
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+О(n) где n - количество участников, которое мы получаем на вход в качестве параметра.
+Сортируем массив "in place", не создавая второй массив для отсортированных данных.
 
 --ID успешной посылки--
-
+https://contest.yandex.ru/contest/24810/run-report/115708053/
      */
 
 import java.io.*;
@@ -35,7 +40,7 @@ public class A {
         currentSize = 0;
     }
 
-    public void addParticipant(Participant participant, int index) {
+    public void add(Participant participant, int index) {
         heap[index] = participant;
     }
 
@@ -74,7 +79,7 @@ public class A {
                 return;
             }
 
-            // в данной точке мы точно знаем, что есть как миниму левый узел со значение больше корня
+            // в данной точке мы точно знаем, что есть как минимум левый узел со значение больше корня
             indexLargest = left;
             // проверяем, что есть оба дочерних узла и присваиваеи большее  значение
             //переменной  indexLargest
@@ -102,7 +107,7 @@ public class A {
 
             for (int i = 0; i < participantNumber; i++) {
                 final String[] currentParticipant = reader.readLine().trim().split(" ");
-                heap.addParticipant(new Participant(currentParticipant[0], Integer.parseInt(currentParticipant[1]),
+                heap.add(new Participant(currentParticipant[0], Integer.parseInt(currentParticipant[1]),
                         Integer.parseInt(currentParticipant[2])), i);
                 heap.increaseSize();
             }
@@ -116,7 +121,7 @@ public class A {
             for (j = participantNumber - 1; j >= 0; j--) {
                 Participant highestParticipant = heap.delete();
                 System.out.println(highestParticipant.name);
-                heap.addParticipant(highestParticipant, j);
+                heap.add(highestParticipant, j);
             }
         }
     }

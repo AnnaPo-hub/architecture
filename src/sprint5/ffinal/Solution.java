@@ -39,9 +39,26 @@ class Node {
 // <template>
 
 public class Solution {
+
+    //получает на вход корень дерева и ключ
     public static Node remove(Node root, int key) {
         // Your code
         // “ヽ(´▽｀)ノ”
+        return null;
+    }
+
+
+    private Node findNode(Node root, int key) {
+        if (root.getValue() == key) {
+            return root;
+        } else {
+            if (root.getLeft() != null) {
+                return findNode(root.getLeft(), key);
+            }
+            if (root.getRight() != null) {
+                return findNode(root.getRight(), key);
+            }
+        }
         return null;
     }
 
