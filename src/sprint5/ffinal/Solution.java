@@ -93,49 +93,59 @@ public class Solution {
             }
         }
 
-        //есть два потомка
-        //находим замену для удаляемого
-        final Node substitute = getSubstitute(current);
+        else {
 
-        if (isLeftChild) {
-            parent.setLeft(substitute);
-        } else {
-            parent.setRight(substitute);
+            //есть два потомка
+            //находим замену для удаляемого
+            final Node substitute = getSubstitute(current);
+            if (current == root) {
+                root = substitute;
+            }
+              else  if (isLeftChild) {
+                    parent.setLeft(substitute);
+                } else {
+                    parent.setRight(substitute);
+                }
         }
         return root;
     }
 
 
-    //находит узел для замены:  самую правую вершину в левом поддереве или самую левую вершину в правом поддереве
-    //TODO в этой точке мы знаем, что есть 2 потомка, подумать какого все-таки лучше брать потомка
-    private static Node getSubstitute(Node root) {
-        Node substitute = null;
-        if (root.getLeft() != null) {
-            substitute = root.getLeft();
-            while (substitute.getRight() != null) {
-                substitute = substitute.getRight();
+    //находит узел для замены:  самую левую вершину в правом поддереве
+    // + переставляет указатели на потомков
+    private static Node getSubstitute(Node node) {
+        Node substitute = node;
+        Node substituteParent = node;
+        Node current = node.getRight();
+
+            while (current != null) {
+                substituteParent=substitute;
+                substitute = current;
+                current = current.getLeft();
             }
-        }
-//        else if (root.getRight()  !=null) {
-//           substitute = root.getRight();
-//            while (substitute.getRight() != null) {
-//                substitute = substitute.getLeft();
-//            }
-//        }
+
+            if(substitute!= node.getRight()){
+                substituteParent.setLeft(substitute.getRight());
+                substitute.setRight(node.getRight());
+            }
         return substitute;
     }
 
-    private static void test() {
-        Node node1 = new Node(null, null, 2);
-        Node node2 = new Node(node1, null, 3);
-        Node node3 = new Node(null, node2, 1);
-        Node node4 = new Node(null, null, 6);
-        Node node5 = new Node(node4, null, 8);
-        Node node6 = new Node(node5, null, 10);
-        Node node7 = new Node(node3, node6, 5);
-        Node newHead = remove(node7, 10);
-        assert newHead.getValue() == 5;
-        assert newHead.getRight() == node5;
-        assert newHead.getRight().getValue() == 8;
+    public static void main(String[] args) {
+
+        Node node5 = new Node(null, null, 3);
+        Node node4 = new Node(null, null, 1);
+
+        Node node7 = new Node(null, null, 7);
+        Node node6 = new Node(null, null, 5);
+
+        Node node3 = new Node(node6, node7, 6);
+        Node node2 = new Node(node4, node5, 2);
+
+        Node node1 = new Node(node2, node3, 4);
+        Node newHead = remove(node1, 2);
+        assert newHead.getValue() == 4;
+        System.out.println( newHead.getLeft() == node5);
+        System.out.println(newHead.getLeft().getValue() == 3);
     }
 }
