@@ -75,13 +75,14 @@ public class Solution {
             } else {
                 parent.setRight(null);
             }
+            //есть только левый потомок
         } else if (current.getRight() == null) {
             if (current == root)
                 root = current.getLeft();
             else if (isLeftChild) {
                 parent.setLeft(current.getLeft());
             } else parent.setRight(current.getLeft());
-
+            //есть только правый потомок
         } else if (current.getLeft() == null) {
             if (current == root)
                 root = current.getRight();
@@ -93,7 +94,7 @@ public class Solution {
         }
 
         //есть два потомка
-        //находим замену
+        //находим замену для удаляемого
         final Node substitute = getSubstitute(current);
 
         if (isLeftChild) {
@@ -101,8 +102,7 @@ public class Solution {
         } else {
             parent.setRight(substitute);
         }
-
-        return null;
+        return root;
     }
 
 
@@ -125,7 +125,7 @@ public class Solution {
         return substitute;
     }
 
-    public static void main(String[] args) {
+    private static void test() {
         Node node1 = new Node(null, null, 2);
         Node node2 = new Node(node1, null, 3);
         Node node3 = new Node(null, node2, 1);
@@ -134,9 +134,8 @@ public class Solution {
         Node node6 = new Node(node5, null, 10);
         Node node7 = new Node(node3, node6, 5);
         Node newHead = remove(node7, 10);
-        System.out.println(newHead.getValue() == 5);
-        System.out.println(newHead.getRight() == node5);
-        System.out.println(newHead.getRight().getValue() == 8);
+        assert newHead.getValue() == 5;
+        assert newHead.getRight() == node5;
+        assert newHead.getRight().getValue() == 8;
     }
 }
-
