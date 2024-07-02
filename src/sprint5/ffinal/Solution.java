@@ -43,26 +43,89 @@ public class Solution {
     //получает на вход корень дерева и ключ
     public static Node remove(Node root, int key) {
         // Your code
-        // “ヽ(´▽｀)ノ”
-        return null;
-    }
-
-
-    private Node findNode(Node root, int key) {
+        //искомый элемент - корневой , его удаление приводит к очистке дерева
         if (root.getValue() == key) {
-            return root;
-        } else {
-            if (root.getLeft() != null) {
-                return findNode(root.getLeft(), key);
+            return null;
+        }
+        //текущий элемент и он же в итоге найденный искомый
+        Node current = root;
+        Node parent = root;
+
+        boolean isLeftChild = false;
+
+        while (current.getValue() != key) {
+            parent = current;
+            if (key > current.getValue()) {
+                current = current.getRight();
+            } else {
+                current = current.getLeft();
+                isLeftChild = true;
             }
-            if (root.getRight() != null) {
-                return findNode(root.getRight(), key);
+            //искомый элемент не найден
+            if (current == null) {
+                return root;
             }
         }
+
+        // нашли узел
+        //первый вариант P — лист дерева, у него нет собственных детей.
+        if (current.getLeft() == null && current.getRight() == null) {
+            if (isLeftChild) {
+                parent.setLeft(null);
+            } else {
+                parent.setRight(null);
+            }
+        } else if (current.getRight() == null) {
+            if (current == root)
+                root = current.getLeft();
+            else if (isLeftChild) {
+                parent.setLeft(current.getLeft());
+            } else parent.setRight(current.getLeft());
+
+        } else if (current.getLeft() == null) {
+            if (current == root)
+                root = current.getRight();
+            else if (isLeftChild) {
+                parent.setLeft(current.getRight());
+            } else {
+                parent.setRight(current.getRight());
+            }
+        }
+
+        //есть два потомка
+        //находим замену
+        final Node substitute = getSubstitute(current);
+
+        if (isLeftChild) {
+            parent.setLeft(substitute);
+        } else {
+            parent.setRight(substitute);
+        }
+
         return null;
     }
 
-    private static void test() {
+
+    //находит узел для замены:  самую правую вершину в левом поддереве или самую левую вершину в правом поддереве
+    //TODO в этой точке мы знаем, что есть 2 потомка, подумать какого все-таки лучше брать потомка
+    private static Node getSubstitute(Node root) {
+        Node substitute = null;
+        if (root.getLeft() != null) {
+            substitute = root.getLeft();
+            while (substitute.getRight() != null) {
+                substitute = substitute.getRight();
+            }
+        }
+//        else if (root.getRight()  !=null) {
+//           substitute = root.getRight();
+//            while (substitute.getRight() != null) {
+//                substitute = substitute.getLeft();
+//            }
+//        }
+        return substitute;
+    }
+
+    public static void main(String[] args) {
         Node node1 = new Node(null, null, 2);
         Node node2 = new Node(node1, null, 3);
         Node node3 = new Node(null, node2, 1);
@@ -71,8 +134,9 @@ public class Solution {
         Node node6 = new Node(node5, null, 10);
         Node node7 = new Node(node3, node6, 5);
         Node newHead = remove(node7, 10);
-        assert newHead.getValue() == 5;
-        assert newHead.getRight() == node5;
-        assert newHead.getRight().getValue() == 8;
+        System.out.println(newHead.getValue() == 5);
+        System.out.println(newHead.getRight() == node5);
+        System.out.println(newHead.getRight().getValue() == 8);
     }
 }
+
