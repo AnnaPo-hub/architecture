@@ -52,6 +52,7 @@ public class Solution {
             parent = current;
             if (key > current.getValue()) {
                 current = current.getRight();
+                isLeftChild = false;
             } else {
                 current = current.getLeft();
                 isLeftChild = true;
@@ -127,17 +128,17 @@ public class Solution {
 
     public static void main(String[] args) {
 
-//        Node node5 = new Node(null, null, 3);
-//        Node node4 = new Node(null, null, 1);
-//
-//        Node node7 = new Node(null, null, 7);
-//        Node node6 = new Node(null, null, 5);
-//
-//        Node node3 = new Node(node6, node7, 6);
-//        Node node2 = new Node(node4, node5, 2);
+        Node node5 = new Node(null, null, 3);
+        Node node4 = new Node(null, null, 1);
 
-        Node node1 = new Node(null, null, 5);
-        Node newHead = remove(node1, 5);
+        Node node7 = new Node(null, null, 7);
+        Node node6 = new Node(null, null, 5);
+
+        Node node3 = new Node(node6, node7, 6);
+        Node node2 = new Node(node4, node5, 2);
+
+        Node node1 = new Node(node2, node3, 4);
+        Node newHead = remove(node1, 3);
 //        assert newHead.getValue() == 4;
         System.out.println(newHead.getValue());
 //        System.out.println(newHead.getLeft().getValue() == 3);
