@@ -42,11 +42,6 @@ public class Solution {
 
     //получает на вход корень дерева и ключ
     public static Node remove(Node root, int key) {
-        // Your code
-        //искомый элемент - корневой , его удаление приводит к очистке дерева
-        if (root.getValue() == key) {
-            return null;
-        }
         //текущий элемент и он же в итоге найденный искомый
         Node current = root;
         Node parent = root;
@@ -70,7 +65,9 @@ public class Solution {
         // нашли узел
         //первый вариант P — лист дерева, у него нет собственных детей.
         if (current.getLeft() == null && current.getRight() == null) {
-            if (isLeftChild) {
+            if (current == root) {
+                root = null;
+            } else if (isLeftChild) {
                 parent.setLeft(null);
             } else {
                 parent.setRight(null);
@@ -91,61 +88,58 @@ public class Solution {
             } else {
                 parent.setRight(current.getRight());
             }
-        }
-
-        else {
+        } else {
 
             //есть два потомка
             //находим замену для удаляемого
             final Node substitute = getSubstitute(current);
             if (current == root) {
                 root = substitute;
+            } else if (isLeftChild) {
+                parent.setLeft(substitute);
+            } else {
+                parent.setRight(substitute);
             }
-              else  if (isLeftChild) {
-                    parent.setLeft(substitute);
-                } else {
-                    parent.setRight(substitute);
-                }
         }
         return root;
     }
 
 
     //находит узел для замены:  самую левую вершину в правом поддереве
-    // + переставляет указатели на потомков
+    // и переставляет указатели на потомков
     private static Node getSubstitute(Node node) {
         Node substitute = node;
         Node substituteParent = node;
         Node current = node.getRight();
 
-            while (current != null) {
-                substituteParent=substitute;
-                substitute = current;
-                current = current.getLeft();
-            }
+        while (current != null) {
+            substituteParent = substitute;
+            substitute = current;
+            current = current.getLeft();
+        }
 
-            if(substitute!= node.getRight()){
-                substituteParent.setLeft(substitute.getRight());
-                substitute.setRight(node.getRight());
-            }
+        if (substitute != node.getRight()) {
+            substituteParent.setLeft(substitute.getRight());
+            substitute.setRight(node.getRight());
+        }
         return substitute;
     }
 
     public static void main(String[] args) {
 
-        Node node5 = new Node(null, null, 3);
-        Node node4 = new Node(null, null, 1);
+//        Node node5 = new Node(null, null, 3);
+//        Node node4 = new Node(null, null, 1);
+//
+//        Node node7 = new Node(null, null, 7);
+//        Node node6 = new Node(null, null, 5);
+//
+//        Node node3 = new Node(node6, node7, 6);
+//        Node node2 = new Node(node4, node5, 2);
 
-        Node node7 = new Node(null, null, 7);
-        Node node6 = new Node(null, null, 5);
-
-        Node node3 = new Node(node6, node7, 6);
-        Node node2 = new Node(node4, node5, 2);
-
-        Node node1 = new Node(node2, node3, 4);
-        Node newHead = remove(node1, 2);
-        assert newHead.getValue() == 4;
-        System.out.println( newHead.getLeft() == node5);
-        System.out.println(newHead.getLeft().getValue() == 3);
+        Node node1 = new Node(null, null, 5);
+        Node newHead = remove(node1, 5);
+//        assert newHead.getValue() == 4;
+        System.out.println(newHead.getValue());
+//        System.out.println(newHead.getLeft().getValue() == 3);
     }
 }
