@@ -69,7 +69,7 @@ class Node {
     }
 }
 
-public class Solution {
+public class B {
 
     //получает на вход корень дерева и ключ
     public static Node remove(Node root, int key) {
