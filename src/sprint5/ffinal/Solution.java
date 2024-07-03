@@ -90,7 +90,6 @@ public class Solution {
                 parent.setRight(current.getRight());
             }
         } else {
-
             //есть два потомка
             //находим замену для удаляемого
             final Node substitute = getSubstitute(current);
@@ -101,6 +100,7 @@ public class Solution {
             } else {
                 parent.setRight(substitute);
             }
+            substitute.setLeft(current.getLeft());
         }
         return root;
     }
@@ -138,9 +138,10 @@ public class Solution {
         Node node2 = new Node(node4, node5, 2);
 
         Node node1 = new Node(node2, node3, 4);
-        Node newHead = remove(node1, 3);
+        Node newHead = remove(node1, 6);
 //        assert newHead.getValue() == 4;
-        System.out.println(newHead.getValue());
-//        System.out.println(newHead.getLeft().getValue() == 3);
+        System.out.println(newHead.getValue()==4);
+       System.out.println(newHead.getRight().getValue() == 7);
+
     }
 }
