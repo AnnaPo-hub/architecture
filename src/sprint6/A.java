@@ -1,9 +1,7 @@
 package sprint6;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class A {
@@ -16,12 +14,12 @@ public class A {
             int vectorQuantity = quantity.get(0);
             int edgesQuantity = quantity.get(1);
 
-            int[] edgesQuantityFromVector = new int[vectorQuantity+1];
+            int[] edgesQuantityFromVector = new int[vectorQuantity + 1];
 
-            for (int i = 1; i < edgesQuantity+1; i++) {
+            for (int i = 1; i < vectorQuantity + 1; i++) {
                 edgesQuantityFromVector[i] = 0;
             }
-            ArrayList<Integer>[] vectors = new ArrayList[vectorQuantity+1];
+            ArrayList<Integer>[] vectors = new ArrayList[vectorQuantity + 1];
             for (int i = 1; i < vectors.length; i++) {
                 vectors[i] = new ArrayList<>();
             }
@@ -38,7 +36,14 @@ public class A {
 
             //печатаем результат
             for (int i = 1; i < edgesQuantityFromVector.length; i++) {
-                System.out.println(edgesQuantityFromVector[i] + " " + (!vectors[i].isEmpty() ? vectors[i] : ""));
+                Collections.sort(vectors[i]);
+                String collect = "";
+                if (!vectors[i].isEmpty()) {
+                    collect = vectors[i].stream()
+                            .map(Objects::toString)
+                            .collect(Collectors.joining(" "));
+                }
+                System.out.println(edgesQuantityFromVector[i] + " " + (!vectors[i].isEmpty() ? collect : ""));
             }
         }
     }
