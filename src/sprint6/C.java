@@ -22,9 +22,9 @@ public class C {
     private void initializeMatrix(int edgesQuantity, BufferedReader reader) throws IOException {
         for (int i = 1; i <= edgesQuantity; i++) {
             final List<Integer> currentLine = readList(reader);
-                final Integer firstVector = currentLine.get(0);
-                final Integer secondVector = currentLine.get(1);
-                matrix[firstVector][secondVector] = 1;
+            final Integer firstVector = currentLine.get(0);
+            final Integer secondVector = currentLine.get(1);
+            matrix[firstVector][secondVector] = 1;
         }
     }
 
@@ -41,14 +41,15 @@ public class C {
             for (int j = 0; j < matrix.length; j++) {
                 if (matrix[vertex][j] == 1 && !outgoingEdges.contains(j)) {
                     outgoingEdges.add(j);
-                } else if (matrix[i][vertex] == 1&&!outgoingEdges.contains(i)){
+                } else if (matrix[i][vertex] == 1 && !outgoingEdges.contains(i)) {
                     outgoingEdges.add(i);
                 }
             }
         }
         Collections.sort(outgoingEdges);
-      //  System.out.println(" Возвращаю смежные вершины для вершины " + vertex);
-       // outgoingEdges.forEach(System.out::println);
+        Collections.reverse(outgoingEdges);
+        //  System.out.println(" Возвращаю смежные вершины для вершины " + vertex);
+        // outgoingEdges.forEach(System.out::print);
         return outgoingEdges;
     }
 
@@ -74,12 +75,13 @@ public class C {
                 // Красим вершину в серый. И сразу кладём её обратно в стек:
                 // это позволит алгоритму позднее вспомнить обратный путь по графу.
                 color.set(v, "gray");
-               //System.out.println(" Печатаю вершину " + v);
+                //System.out.println(" Печатаю вершину " + v);
                 System.out.print(v + " ");
                 stack.push(v);
 
                 // Теперь добавляем в стек все непосещённые соседние вершины,
                 // вместо вызова рекурсии
+
                 for (int w : outgoingEdges(v)) {
                     // Для каждого исходящего ребра (v, w):
                     if (color.get(w).equals("white")) {
@@ -107,7 +109,7 @@ public class C {
             c.initializeMatrix(edgesQuantity, reader);
 
             final int startVertex = Integer.parseInt(reader.readLine());
-           // System.out.println("StartVertex : " +  startVertex);
+            // System.out.println("StartVertex : " +  startVertex);
             c.initializeColor(vectorQuantity);
 
             c.DFS(startVertex);
