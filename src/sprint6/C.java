@@ -18,7 +18,7 @@ public class C {
         }
     }
 
-    //инициализирует матрицу
+    //инициализирует матрицу :  читает данные из инпута по вершинам и ребрам и рисует матрицу смежности
     private void initializeMatrix(int edgesQuantity, BufferedReader reader) throws IOException {
         for (int i = 1; i <= edgesQuantity; i++) {
             final List<Integer> currentLine = readList(reader);
@@ -28,6 +28,8 @@ public class C {
         }
     }
 
+
+    //в массиве хранятся цвета вершин , белые - мы там не были ни разу, серые были на пути "туда", "черные" были на пути "обратно
     private void initializeColor(int numVertices) { // Длина массива numVertices равна числу вершин |V|.
         color = new ArrayList<>();
         for (int i = 0; i <= numVertices; i++) {
@@ -35,6 +37,7 @@ public class C {
         }
     }
 
+    //на вход получает вершину, отдает список смежных вершин для обхода
     private List<Integer> outgoingEdges(Integer vertex) {
         List<Integer> outgoingEdges = new ArrayList<>();
         for (int i = 0; i < matrix.length; i++) {
@@ -53,14 +56,6 @@ public class C {
         return outgoingEdges;
     }
 
-//    private void mainDFS() {
-//        for (int i = 0; i < color.size(); i++) {
-//            // Перебираем варианты стартовых вершин, пока они существуют.
-//            if (color.get(i).equals("white")) {
-//                DFS(i); // Запускаем обход, стартуя с i-й вершины.
-//            }
-//        }
-//    }
 
     void DFS(int startVertex) {
         Stack<Integer> stack = new Stack<>();
