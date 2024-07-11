@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class C {
 
-    List<String> color;
+    List<Byte> color;
     int[][] matrix;
 
     public C(int vectorQuantity) {
@@ -33,7 +33,7 @@ public class C {
     private void initializeColor(int numVertices) { // Длина массива numVertices равна числу вершин |V|.
         color = new ArrayList<>();
         for (int i = 0; i <= numVertices; i++) {
-            color.add("white");
+            color.add((byte) 0);
         }
     }
 
@@ -66,10 +66,10 @@ public class C {
             // Это может быть как новая вершина, так и уже посещённая однажды.
             int v = stack.pop();
 
-            if (color.get(v).equals("white")) {
+            if (color.get(v)==0) {
                 // Красим вершину в серый. И сразу кладём её обратно в стек:
                 // это позволит алгоритму позднее вспомнить обратный путь по графу.
-                color.set(v, "gray");
+                color.set(v, (byte) 1);
                 //System.out.println(" Печатаю вершину " + v);
                 System.out.print(v + " ");
                 stack.push(v);
@@ -79,14 +79,14 @@ public class C {
 
                 for (int w : outgoingEdges(v)) {
                     // Для каждого исходящего ребра (v, w):
-                    if (color.get(w).equals("white")) {
+                    if (color.get(w)==0) {
                         stack.push(w);
                     }
                 }
-            } else if (color.get(v).equals("gray")) {
+            } else if (color.get(v)==1) {
                 // Серую вершину мы могли получить из стека только на обратном пути.
                 // Следовательно, её следует перекрасить в чёрный.
-                color.set(v, "black");
+                color.set(v, (byte) 2);
             }
         }
     }
