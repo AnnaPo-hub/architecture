@@ -49,8 +49,7 @@ public class C {
                 }
             }
         }
-        Collections.sort(outgoingEdges);
-        Collections.reverse(outgoingEdges);
+        Collections.sort(outgoingEdges, Collections.reverseOrder());
         //  System.out.println(" Возвращаю смежные вершины для вершины " + vertex);
         // outgoingEdges.forEach(System.out::print);
         return outgoingEdges;
