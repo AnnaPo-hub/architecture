@@ -7,26 +7,6 @@ import java.util.stream.Collectors;
 public class C {
 
     List<Byte> color;
-    int[][] matrix;
-
-    public C(int vectorQuantity) {
-        this.matrix = new int[vectorQuantity + 1][vectorQuantity + 1];
-        for (int i = 1; i < vectorQuantity + 1; i++) {
-            for (int j = 1; j < vectorQuantity + 1; j++) {
-                matrix[i][j] = 0;
-            }
-        }
-    }
-
-    //инициализирует матрицу :  читает данные из инпута по вершинам и ребрам и рисует матрицу смежности
-//    private void initializeMatrix(int edgesQuantity, BufferedReader reader) throws IOException {
-//        for (int i = 1; i <= edgesQuantity; i++) {
-//            final List<Integer> currentLine = readList(reader);
-//            final Integer firstVector = currentLine.get(0);
-//            final Integer secondVector = currentLine.get(1);
-//            matrix[firstVector][secondVector] = 1;
-//        }
-//    }
 
 
     //в массиве хранятся цвета вершин , белые - мы там не были ни разу, серые были на пути "туда", "черные" были на пути "обратно
@@ -126,7 +106,7 @@ public class C {
             int vectorQuantity = quantity.get(0);
             int edgesQuantity = quantity.get(1);
 
-            C c = new C(vectorQuantity);
+            C c = new C();
 
             c.initializeColor(vectorQuantity);
 
