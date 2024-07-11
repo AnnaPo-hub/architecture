@@ -19,14 +19,14 @@ public class C {
     }
 
     //инициализирует матрицу :  читает данные из инпута по вершинам и ребрам и рисует матрицу смежности
-    private void initializeMatrix(int edgesQuantity, BufferedReader reader) throws IOException {
-        for (int i = 1; i <= edgesQuantity; i++) {
-            final List<Integer> currentLine = readList(reader);
-            final Integer firstVector = currentLine.get(0);
-            final Integer secondVector = currentLine.get(1);
-            matrix[firstVector][secondVector] = 1;
-        }
-    }
+//    private void initializeMatrix(int edgesQuantity, BufferedReader reader) throws IOException {
+//        for (int i = 1; i <= edgesQuantity; i++) {
+//            final List<Integer> currentLine = readList(reader);
+//            final Integer firstVector = currentLine.get(0);
+//            final Integer secondVector = currentLine.get(1);
+//            matrix[firstVector][secondVector] = 1;
+//        }
+//    }
 
 
     //в массиве хранятся цвета вершин , белые - мы там не были ни разу, серые были на пути "туда", "черные" были на пути "обратно
@@ -37,26 +37,54 @@ public class C {
         }
     }
 
-    //на вход получает вершину, отдает список смежных вершин для обхода
-    private List<Integer> outgoingEdges(Integer vertex) {
-        List<Integer> outgoingEdges = new ArrayList<>();
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
-                if (matrix[vertex][j] == 1 && !outgoingEdges.contains(j)) {
-                    outgoingEdges.add(j);
-                } else if (matrix[i][vertex] == 1 && !outgoingEdges.contains(i)) {
-                    outgoingEdges.add(i);
-                }
-            }
-        }
-        Collections.sort(outgoingEdges, Collections.reverseOrder());
-        //  System.out.println(" Возвращаю смежные вершины для вершины " + vertex);
-        // outgoingEdges.forEach(System.out::print);
-        return outgoingEdges;
+    private List<Integer> outgoingEdges(Integer vertex, ArrayList<Integer>[] vectors) {
+        Collections.sort(vectors[vertex], Collections.reverseOrder());
+        return vectors[vertex];
     }
 
+    //возвращает массив списков смежных вершин для неориентированного графа
+    private ArrayList<Integer>[] getEdgesData(int edgesQuantity, BufferedReader reader, int vectorQuantity) throws IOException {
+        ArrayList<Integer>[] vectors = new ArrayList[vectorQuantity + 1];
 
-    void DFS(int startVertex) {
+        for (int i = 1; i < vectors.length; i++) {
+            vectors[i] = new ArrayList<>();
+        }
+
+        for (int i = 0; i < edgesQuantity; i++) {
+            final List<Integer> currentLine = readList(reader);
+            final Integer firstVector = currentLine.get(0);
+            final Integer secondVector = currentLine.get(1);
+
+            if (!vectors[firstVector].contains(secondVector)) {
+                vectors[firstVector].add(secondVector);
+            }
+            if (!vectors[secondVector].contains(firstVector)) {
+                vectors[secondVector].add(firstVector);
+            }
+        }
+        return vectors;
+    }
+
+//    //на вход получает вершину, отдает список смежных вершин для обхода
+//    private List<Integer> outgoingEdges(Integer vertex) {
+//        List<Integer> outgoingEdges = new ArrayList<>();
+//        for (int i = 0; i < matrix.length; i++) {
+//            for (int j = 0; j < matrix.length; j++) {
+//                if (matrix[vertex][j] == 1 && !outgoingEdges.contains(j)) {
+//                    outgoingEdges.add(j);
+//                } else if (matrix[i][vertex] == 1 && !outgoingEdges.contains(i)) {
+//                    outgoingEdges.add(i);
+//                }
+//            }
+//        }
+//        Collections.sort(outgoingEdges, Collections.reverseOrder());
+//        //  System.out.println(" Возвращаю смежные вершины для вершины " + vertex);
+//        // outgoingEdges.forEach(System.out::print);
+//        return outgoingEdges;
+//    }
+
+
+    void DFS(int startVertex, ArrayList<Integer>[] vectors) {
         Stack<Integer> stack = new Stack<>();
         stack.push(startVertex);  // Добавляем стартовую вершину в стек.
 
@@ -65,7 +93,7 @@ public class C {
             // Это может быть как новая вершина, так и уже посещённая однажды.
             int v = stack.pop();
 
-            if (color.get(v)==0) {
+            if (color.get(v) == 0) {
                 // Красим вершину в серый. И сразу кладём её обратно в стек:
                 // это позволит алгоритму позднее вспомнить обратный путь по графу.
                 color.set(v, (byte) 1);
@@ -76,13 +104,13 @@ public class C {
                 // Теперь добавляем в стек все непосещённые соседние вершины,
                 // вместо вызова рекурсии
 
-                for (int w : outgoingEdges(v)) {
+                for (int w : outgoingEdges(v, vectors)) {
                     // Для каждого исходящего ребра (v, w):
-                    if (color.get(w)==0) {
+                    if (color.get(w) == 0) {
                         stack.push(w);
                     }
                 }
-            } else if (color.get(v)==1) {
+            } else if (color.get(v) == 1) {
                 // Серую вершину мы могли получить из стека только на обратном пути.
                 // Следовательно, её следует перекрасить в чёрный.
                 color.set(v, (byte) 2);
@@ -100,13 +128,13 @@ public class C {
 
             C c = new C(vectorQuantity);
 
-            c.initializeMatrix(edgesQuantity, reader);
-
-            final int startVertex = Integer.parseInt(reader.readLine());
-            // System.out.println("StartVertex : " +  startVertex);
             c.initializeColor(vectorQuantity);
 
-            c.DFS(startVertex);
+            final ArrayList<Integer>[] edgesData = c.getEdgesData(edgesQuantity, reader, vectorQuantity);
+            final int startVertex = Integer.parseInt(reader.readLine());
+            // System.out.println("StartVertex : " +  startVertex);
+
+            c.DFS(startVertex, edgesData);
         }
     }
 
