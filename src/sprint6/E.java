@@ -4,16 +4,44 @@ import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class C {
+/*
+Вам дан неориентированный граф. Найдите его компоненты связности.
 
-    List<Byte> color;
+Формат ввода
+В первой строке дано количество вершин n (1≤ n ≤ 105) и рёбер m (0 ≤ m ≤ 2 ⋅ 105). В каждой из следующих m строк записано по ребру в виде пары вершин 1 ≤ u, v ≤ n.
+
+Гарантируется, что в графе нет петель и кратных рёбер.
+
+Формат вывода
+Выведите все компоненты связности в следующем формате: в первой строке выведите общее количество компонент.
+
+Затем на отдельных строках выведите вершины каждой компоненты, отсортированные по возрастанию номеров. Компоненты между собой упорядочивайте по номеру первой вершины.
+
+Пример 1
+Ввод	Вывод
+6 3
+1 2
+6 5
+2 3
 
 
-    //в массиве хранятся цвета вершин , белые - мы там не были ни разу, серые были на пути "туда", "черные" были на пути "обратно
+3
+1 2 3
+4
+5 6
+
+ */
+
+public class E {
+
+    byte[] color;
+    byte componentCount = 1;
+
+    //в массиве хранятся цвета вершин , вершины одного цвета принадлежат к одной компоненте связности
     void initializeColor(int numVertices) { // Длина массива numVertices равна числу вершин |V|.
-        color = new ArrayList<>();
+        color = new byte[numVertices + 1];
         for (int i = 0; i <= numVertices; i++) {
-            color.add((byte) 0);
+            color[i] = -1;
         }
     }
 
@@ -50,12 +78,12 @@ public class C {
             // Это может быть как новая вершина, так и уже посещённая однажды.
             int v = stack.pop();
 
-            if (color.get(v) == 0) {
+            if (color[v] == -1) {
                 // Красим вершину в серый. И сразу кладём её обратно в стек:
                 // это позволит алгоритму позднее вспомнить обратный путь по графу.
-                color.set(v, (byte) 1);
+                color[v] = ((byte) 1);
                 //System.out.println(" Печатаю вершину " + v);
-                System.out.print(v + " ");
+                // System.out.print(v + " ");
                 stack.push(v);
 
                 // Теперь добавляем в стек все непосещённые соседние вершины,
@@ -63,16 +91,17 @@ public class C {
 
                 for (int w : outgoingEdges(v, vectors)) {
                     // Для каждого исходящего ребра (v, w):
-                    if (color.get(w) == 0) {
+                    if (color[w] == -1) {
                         stack.push(w);
                     }
                 }
-            } else if (color.get(v) == 1) {
+            } else if (color[v] == 1) {
                 // Серую вершину мы могли получить из стека только на обратном пути.
                 // Следовательно, её следует перекрасить в чёрный.
-                color.set(v, (byte) 2);
+                color[v] = componentCount;
             }
         }
+        componentCount += 1;
     }
 
     public static void main(String[] args) throws IOException {
@@ -83,15 +112,29 @@ public class C {
             int vectorQuantity = quantity.get(0);
             int edgesQuantity = quantity.get(1);
 
-            C c = new C();
+            E e = new E();
 
-            c.initializeColor(vectorQuantity);
+            e.initializeColor(vectorQuantity);
 
-            final ArrayList<Integer>[] edgesData = c.getEdgesData(edgesQuantity, reader, vectorQuantity);
-            final int startVertex = Integer.parseInt(reader.readLine());
-            // System.out.println("StartVertex : " +  startVertex);
+            final ArrayList<Integer>[] edgesData = e.getEdgesData(edgesQuantity, reader, vectorQuantity);
 
-            c.DFS(startVertex, edgesData);
+
+            for (int i = 1; i < e.color.length; i++) {
+                // Перебираем варианты стартовых вершин, пока они существуют.
+                if (e.color[i] == -1) {
+                    e.DFS(i, edgesData); // Запускаем обход, стартуя с i-й вершины.
+                }
+            }
+
+            System.out.println(e.componentCount-1);
+            for (int j = 1; j < e.color.length; j++) {
+                for (int i = 1; i < e.color.length; i++) {
+                    if (e.color[i] == j) {
+                        System.out.print(i + " ");
+                    }
+                }
+                System.out.println();
+            }
         }
     }
 

@@ -44,11 +44,6 @@ public class J {
 
     }
 
-//    private List<Integer> outgoingEdges(Integer vertex, ArrayList<Integer>[] vectors) {
-//        Collections.sort(vectors[vertex], Collections.reverseOrder());
-//        return vectors[vertex];
-//    }
-
     private List<Integer> outgoingEdges(Integer vertex) {
         List<Integer> outgoingEdges = new ArrayList<>();
         for (int i = 0; i < matrix.length; i++) {
@@ -79,11 +74,6 @@ public class J {
         //  ingoingEdges.forEach(System.out::print);
         return ingoingEdges;
     }
-
-    private boolean hasIncomingNeigbors(int vector, ArrayList<Integer>[] vectors) {
-        return true;
-    }
-
 
     void DFS(int startVertex) {
 
