@@ -7,31 +7,14 @@ import java.util.stream.Collectors;
 public class J {
 
     List<Byte> color;
-    int[][] matrix;
 
     Stack<Integer> order;  // В этом стеке будет записан порядок обхода
     Stack<Integer> single;  // В этом стеке будут записаны  вершин, у которых нет смежных вершин
 
 
-    public J(int vectorQuantity) {
-        this.matrix = new int[vectorQuantity + 1][vectorQuantity + 1];
-        for (int i = 1; i < vectorQuantity + 1; i++) {
-            for (int j = 1; j < vectorQuantity + 1; j++) {
-                matrix[i][j] = 0;
-            }
-        }
+    public J() {
         order = new Stack<>();
         single = new Stack<>();
-    }
-
-    //инициализирует матрицу
-    private void initializeMatrix(int edgesQuantity, BufferedReader reader) throws IOException {
-        for (int i = 1; i <= edgesQuantity; i++) {
-            final List<Integer> currentLine = readList(reader);
-            final Integer firstVector = currentLine.get(0);
-            final Integer secondVector = currentLine.get(1);
-            matrix[firstVector][secondVector] = 1;
-        }
     }
 
     //в массиве хранятся цвета вершин , белые - мы там не были ни разу, серые были на пути "туда", "черные" были на пути "обратно
@@ -41,58 +24,54 @@ public class J {
         for (int i = 0; i <= numVertices; i++) {
             color.add((byte) 0);
         }
-
     }
 
-    private List<Integer> outgoingEdges(Integer vertex) {
-        List<Integer> outgoingEdges = new ArrayList<>();
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
-                if (matrix[vertex][j] == 1 && !outgoingEdges.contains(j)) {
-                    outgoingEdges.add(j);
-                }
-            }
+    private List<Integer> outgoingEdges(Integer vertex, ArrayList<Integer>[] vectors) {
+        Collections.sort(vectors[vertex], Collections.reverseOrder());
+        return vectors[vertex];
+    }
+
+    //возвращает массив списков смежных вершин для неориентированного графа
+    ArrayList<Integer>[] getEdgesData(int edgesQuantity, BufferedReader reader, int vectorQuantity) throws IOException {
+        ArrayList<Integer>[] vectors = new ArrayList[vectorQuantity + 1];
+
+        for (int i = 1; i < vectors.length; i++) {
+            vectors[i] = new ArrayList<>();
         }
-        Collections.sort(outgoingEdges, Collections.reverseOrder());
-        // System.out.println(" Возвращаю  исходящие смежные вершины для вершины " + vertex);
-        //  outgoingEdges.forEach(System.out::print);
-        return outgoingEdges;
-    }
 
-    //возвращает входящие ребра
-    private List<Integer> ingoingEdges(Integer vertex) {
-        List<Integer> ingoingEdges = new ArrayList<>();
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix.length; j++) {
-                if (matrix[i][vertex] == 1 && !ingoingEdges.contains(i)) {
-                    ingoingEdges.add(i);
-                }
-            }
+        //массив для сохранения вершин в которые есть входяшие ребра
+        ArrayList<Integer> ingoing = new ArrayList<>();
+
+        for (int i = 0; i < edgesQuantity; i++) {
+            final List<Integer> currentLine = readList(reader);
+            final Integer firstVector = currentLine.get(0);
+            final Integer secondVector = currentLine.get(1);
+            vectors[firstVector].add(secondVector);
+            ingoing.add(secondVector);
         }
-        Collections.sort(ingoingEdges, Collections.reverseOrder());
-        // System.out.println(" Возвращаю входящие смежные вершины для вершины " + vertex);
-        //  ingoingEdges.forEach(System.out::print);
-        return ingoingEdges;
+
+        vectors[0] = ingoing;
+        return vectors;
     }
 
-    void DFS(int startVertex) {
+    void DFS(int startVertex, ArrayList<Integer>[] vectors) {
+        final List<Integer> startOutgoing = outgoingEdges(startVertex, vectors);
 
-        Stack<Integer> stack = new Stack<>();
-        stack.push(startVertex);  // Добавляем стартовую вершину в стек.
+        if (startOutgoing.isEmpty() && !vectors[0].contains(startVertex)) {
+            //эта вершина не имеет смежных вершин
+            color.set(startVertex, (byte) 2);
+            single.push(startVertex);
+        } else {
+            Stack<Integer> stack = new Stack<>();
+            stack.push(startVertex);  // Добавляем стартовую вершину в стек.
 
+            while (!stack.isEmpty()) {  // Пока стек не пуст:
+                // Получаем из стека очередную вершину.
+                // Это может быть как новая вершина, так и уже посещённая однажды.
+                int v = stack.pop();
 
-        while (!stack.isEmpty()) {  // Пока стек не пуст:
-            // Получаем из стека очередную вершину.
-            // Это может быть как новая вершина, так и уже посещённая однажды.
-            int v = stack.pop();
+                final List<Integer> outgoing = outgoingEdges(v, vectors);
 
-            final List<Integer> outgoing = outgoingEdges(v);
-            final List<Integer> incoming = ingoingEdges(v);
-            if (incoming.isEmpty() && outgoing.isEmpty()) {
-                //эта вершина не имеет смежных вершин
-                color.set(v, (byte) 2);
-                single.push(v);
-            } else {
                 if (color.get(v) == 0) {
                     // Красим вершину в серый. И сразу кладём её обратно в стек:
                     // это позволит алгоритму позднее вспомнить обратный путь по графу.
@@ -114,9 +93,7 @@ public class J {
                     // Серую вершину мы могли получить из стека только на обратном пути.
                     // Следовательно, её следует перекрасить в чёрный.
                     color.set(v, (byte) 2);
-                    //   leave[v] = time;// Запишем время выхода.
                     order.push(v);
-                    //    time += 1;
                 }
             }
         }
@@ -131,25 +108,26 @@ public class J {
             int vectorQuantity = quantity.get(0);
             int edgesQuantity = quantity.get(1);
 
-            J c = new J(vectorQuantity);
-            c.initializeMatrix(edgesQuantity, reader);
+            J j = new J();
 
-            c.initializeColor(vectorQuantity);
+            final ArrayList<Integer>[] edgesData = j.getEdgesData(edgesQuantity, reader, vectorQuantity);
+
+            j.initializeColor(vectorQuantity);
 
 
-            for (int i = 1; i < c.color.size(); i++) {
+            for (int i = 1; i < j.color.size(); i++) {
                 // Перебираем варианты стартовых вершин, пока они существуют.
-                if (c.color.get(i) == 0) {
-                    c.DFS(i); // Запускаем обход, стартуя с i-й вершины.
+                if (j.color.get(i) == 0) {
+                    j.DFS(i, edgesData); // Запускаем обход, стартуя с i-й вершины.
                 }
             }
 
-            for (int i = c.single.size(); i > 0; i--) {
-                System.out.print(c.single.pop() + " ");
+            for (int i = j.single.size(); i > 0; i--) {
+                System.out.print(j.single.pop() + " ");
             }
 
-            for (int i = c.order.size(); i > 0; i--) {
-                System.out.print(c.order.pop() + " ");
+            for (int i = j.order.size(); i > 0; i--) {
+                System.out.print(j.order.pop() + " ");
             }
         }
     }
