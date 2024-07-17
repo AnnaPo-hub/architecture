@@ -9,7 +9,7 @@ public class J {
     List<Byte> color;
 
     Stack<Integer> order;  // В этом стеке будет записан порядок обхода
-    Stack<Integer> single;  // В этом стеке будут записаны  вершин, у которых нет смежных вершин
+    Stack<Integer> single;  // В этом стеке будут записаны  вершины, у которых нет смежных вершин
 
 
     public J() {
@@ -17,7 +17,7 @@ public class J {
         single = new Stack<>();
     }
 
-    //в массиве хранятся цвета вершин , белые - мы там не были ни разу, серые были на пути "туда", "черные" были на пути "обратно
+    //в массиве хранятся цвета вершин , белые (0) - мы там не были ни разу, серые(1) -  были на пути туда, черные (2) -  были на пути обратно
     void initializeColor(int numVertices) { // Длина массива numVertices равна числу вершин |V|.
         color = new ArrayList<>();
 
@@ -27,17 +27,21 @@ public class J {
     }
 
     private List<Integer> outgoingEdges(Integer vertex, ArrayList<Integer>[] vectors) {
-        Collections.sort(vectors[vertex], Collections.reverseOrder());
-        return vectors[vertex];
+        if (vectors[vertex] != null) {
+            Collections.sort(vectors[vertex], Collections.reverseOrder());
+            return vectors[vertex];
+        }
+      return new ArrayList<>();
     }
 
     //возвращает массив списков смежных вершин для неориентированного графа
     ArrayList<Integer>[] getEdgesData(int edgesQuantity, BufferedReader reader, int vectorQuantity) throws IOException {
         ArrayList<Integer>[] vectors = new ArrayList[vectorQuantity + 1];
 
-        for (int i = 1; i < vectors.length; i++) {
-            vectors[i] = new ArrayList<>();
-        }
+        //TODO  убрать эту инициализацию?
+//        for (int i = 1; i < vectors.length; i++) {
+//            vectors[i] = new ArrayList<>();
+//        }
 
         //массив для сохранения вершин в которые есть входяшие ребра
         ArrayList<Integer> ingoing = new ArrayList<>();
@@ -46,6 +50,9 @@ public class J {
             final List<Integer> currentLine = readList(reader);
             final Integer firstVector = currentLine.get(0);
             final Integer secondVector = currentLine.get(1);
+            if (vectors[firstVector] == null) {
+                vectors[firstVector] = new ArrayList<>();
+            }
             vectors[firstVector].add(secondVector);
             ingoing.add(secondVector);
         }
@@ -57,7 +64,7 @@ public class J {
     void DFS(int startVertex, ArrayList<Integer>[] vectors) {
         final List<Integer> startOutgoing = outgoingEdges(startVertex, vectors);
 
-        if (startOutgoing.isEmpty() && !vectors[0].contains(startVertex)) {
+        if (startOutgoing == null || (startOutgoing.isEmpty() && !vectors[0].contains(startVertex))) {
             //эта вершина не имеет смежных вершин
             color.set(startVertex, (byte) 2);
             single.push(startVertex);
