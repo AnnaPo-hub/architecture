@@ -38,12 +38,20 @@ class Vertex {
 }
 
 class Graph {
-    List<Vertex> vertices;
-    List<Edge> edges;
+    HashSet<Vertex> vertices;
+    HashSet<Edge> edges;
 
     public Graph() {
-        this.vertices = new ArrayList<>();
-        this.edges = new ArrayList<>();
+        this.vertices = new HashSet<>();
+        this.edges = new HashSet<>();
+    }
+
+    public HashSet<Vertex> getVertices() {
+        return vertices;
+    }
+
+    public HashSet<Edge> getEdges() {
+        return edges;
     }
 }
 
@@ -89,8 +97,8 @@ public class A {
     private List<Edge> findMaxST(Graph graph) {
         notAdded.addAll(graph.vertices);
 
-        // Берём первую попавшуюся вершину.
-        final Vertex vertex = graph.vertices.get(0);
+        // Берём первую попавшуюся вершину
+        final Vertex vertex = graph.vertices.iterator().next();
         addVertex(vertex);
 
         while (!notAdded.isEmpty() && !edges.isEmpty()) {
@@ -131,8 +139,7 @@ public class A {
             final List<Edge> maxST = a.findMaxST(a.graph);
 
             int sum = 0;
-            for (Edge edge : maxST
-            ) {
+            for (Edge edge : maxST) {
                 sum += edge.weight;
             }
             System.out.println(sum);
