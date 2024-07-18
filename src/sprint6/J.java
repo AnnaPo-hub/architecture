@@ -38,10 +38,9 @@ public class J {
     ArrayList<Integer>[] getEdgesData(int edgesQuantity, BufferedReader reader, int vectorQuantity) throws IOException {
         ArrayList<Integer>[] vectors = new ArrayList[vectorQuantity + 1];
 
-        //TODO  убрать эту инициализацию?
-//        for (int i = 1; i < vectors.length; i++) {
-//            vectors[i] = new ArrayList<>();
-//        }
+        for (int i = 1; i < vectors.length; i++) {
+            vectors[i] = new ArrayList<>();
+        }
 
         //массив для сохранения вершин в которые есть входяшие ребра
         ArrayList<Integer> ingoing = new ArrayList<>();
