@@ -40,15 +40,26 @@ class Vertex {
 class Graph {
     List<Vertex> vertices;
     List<Edge> edges;
+
+    public Graph() {
+        this.vertices = new ArrayList<>();
+        this.edges = new ArrayList<>();
+    }
 }
 
 public class A {
     Graph graph;
-    ArrayList<Edge> maximumSpanningTree = new ArrayList<>();
-    ArrayList<Vertex> notAdded = new ArrayList<>();  // Множество вершин, ещё не добавленных в остов.
-    ArrayList<Vertex> added = new ArrayList<>();// Множество вершин, уже добавленных в остов.
-    ArrayList<Edge> edges = new ArrayList<>();//Массив рёбер, исходящих из остовного дерева.
+    ArrayList<Edge> maximumSpanningTree;
+    ArrayList<Vertex> notAdded;  // Множество вершин, ещё не добавленных в остов.
+    ArrayList<Vertex> added;// Множество вершин, уже добавленных в остов.
+    ArrayList<Edge> edges;//Массив рёбер, исходящих из остовного дерева.
 
+    public A() {
+        this.maximumSpanningTree = new ArrayList<>();
+        this.notAdded = new ArrayList<>();
+        this.added = new ArrayList<>();
+        this.edges = new ArrayList<>();
+    }
 
     //читает инпут, заполняет граф
     private Graph initializeGraph(int edgesQuantity, BufferedReader reader) throws IOException {
@@ -115,9 +126,16 @@ public class A {
             int edgesQuantity = quantity.get(1);
 
             final A a = new A();
-            a.initializeGraph(edgesQuantity, reader);
+            a.graph = a.initializeGraph(edgesQuantity, reader);
 
+            final List<Edge> maxST = a.findMaxST(a.graph);
 
+            int sum = 0;
+            for (Edge edge : maxST
+            ) {
+                sum += edge.weight;
+            }
+            System.out.println(sum);
         }
     }
 
