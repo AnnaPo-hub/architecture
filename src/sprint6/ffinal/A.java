@@ -1,6 +1,8 @@
 package sprint6.ffinal;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,17 @@ class Vertex {
     public Vertex(int value) {
         this.value = value;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        Vertex v = (Vertex) o;
+        return this.value == v.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
 }
 
 class Graph {
@@ -46,26 +59,20 @@ class Graph {
         this.edges = new HashSet<>();
     }
 
-    public HashSet<Vertex> getVertices() {
-        return vertices;
-    }
 
-    public HashSet<Edge> getEdges() {
-        return edges;
-    }
 }
 
 public class A {
     Graph graph;
     ArrayList<Edge> maximumSpanningTree;
-    ArrayList<Vertex> notAdded;  // Множество вершин, ещё не добавленных в остов.
-    ArrayList<Vertex> added;// Множество вершин, уже добавленных в остов.
+    ArrayList<Vertex> notAddedVertices;  // Множество вершин, ещё не добавленных в остов.
+    ArrayList<Vertex> addedVertices;// Множество вершин, уже добавленных в остов.
     ArrayList<Edge> edges;//Массив рёбер, исходящих из остовного дерева.
 
     public A() {
         this.maximumSpanningTree = new ArrayList<>();
-        this.notAdded = new ArrayList<>();
-        this.added = new ArrayList<>();
+        this.notAddedVertices = new ArrayList<>();
+        this.addedVertices = new ArrayList<>();
         this.edges = new ArrayList<>();
     }
 
@@ -87,31 +94,38 @@ public class A {
     }
 
     private void addVertex(Vertex vertex) {
-        added.add(vertex);
-        notAdded.remove(vertex);
+        //добавляем в  остов
+        addedVertices.add(vertex);
+        //убираем из недобавленных в остов
+        notAddedVertices.remove(vertex);
 
-        edges.addAll(graph.edges.stream().filter((it) ->
-                it.start == vertex && notAdded.contains(it.end)).collect(Collectors.toList()));
+        //Добавим ко множеству потенциально добавляемых рёбер все,
+        // которые исходят из новой вершины и входят в вершины, ещё не включённые в остов
+        for (Edge edge : graph.edges) {
+            if (edge.start.equals(vertex) && notAddedVertices.contains(edge.end)) {
+                edges.add(edge);
+            }
+        }
     }
 
     private List<Edge> findMaxST(Graph graph) {
-        notAdded.addAll(graph.vertices);
+        notAddedVertices.addAll(graph.vertices);
 
         // Берём первую попавшуюся вершину
         final Vertex vertex = graph.vertices.iterator().next();
         addVertex(vertex);
 
-        while (!notAdded.isEmpty() && !edges.isEmpty()) {
+        while (!notAddedVertices.isEmpty() && !edges.isEmpty()) {
             // Подразумеваем, что extractMaximum  извлекает максимальное ребро
             // из массива рёбер и больше данного ребра в массиве не будет
             Edge edge = extractMaximum(edges);
-            if (notAdded.contains(edge.end)) {
+            if (notAddedVertices.contains(edge.end)) {
                 maximumSpanningTree.add(edge);
                 addVertex(edge.end);
             }
         }
 
-        if (!notAdded.stream().isParallel()) {
+        if (!notAddedVertices.isEmpty()) {
             System.out.println("Oops! I did it again");
         } else
             //TODO
