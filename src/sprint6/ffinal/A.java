@@ -21,14 +21,6 @@ class Edge {
     public int getWeight() {
         return weight;
     }
-
-    public Vertex getStart() {
-        return start;
-    }
-
-    public Vertex getEnd() {
-        return end;
-    }
 }
 
 class Vertex {
@@ -58,8 +50,6 @@ class Graph {
         this.vertices = new HashSet<>();
         this.edges = new HashSet<>();
     }
-
-
 }
 
 public class A {
@@ -109,49 +99,58 @@ public class A {
     }
 
     private List<Edge> findMaxST(Graph graph) {
-        notAddedVertices.addAll(graph.vertices);
+        if (graph.edges.isEmpty() && notAddedVertices.size() > 1) {
+            return null;
+        } else {
 
-        // Берём первую попавшуюся вершину
-        final Vertex vertex = graph.vertices.iterator().next();
-        addVertex(vertex);
+            notAddedVertices.addAll(graph.vertices);
 
-        while (!notAddedVertices.isEmpty() && !edges.isEmpty()) {
-            // Подразумеваем, что extractMaximum  извлекает максимальное ребро
-            // из массива рёбер и больше данного ребра в массиве не будет
-            Edge edge = extractMaximum(edges);
-            if (notAddedVertices.contains(edge.end)) {
-                maximumSpanningTree.add(edge);
-                addVertex(edge.end);
+            // Берём первую попавшуюся вершину
+            final Vertex vertex = graph.vertices.iterator().next();
+            addVertex(vertex);
+
+            while (!notAddedVertices.isEmpty() && !edges.isEmpty()) {
+                Edge edge = extractMaximum(edges);
+                if (notAddedVertices.contains(edge.end)) {
+                    maximumSpanningTree.add(edge);
+                    addVertex(edge.end);
+                }
             }
         }
-
-        if (!notAddedVertices.isEmpty()) {
-            System.out.println("Oops! I did it again");
-        } else
-            //TODO
-            return maximumSpanningTree;
         return maximumSpanningTree;
     }
 
+
+    //  извлекает и возвращает  максимальное ребро из массива рёбер
     private Edge extractMaximum(List<Edge> edges) {
         Edge maxWeight = edges.stream().max(Comparator.comparing(Edge::getWeight)).get();
         edges.remove(maxWeight);
         return maxWeight;
     }
 
-
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 
             final List<Integer> quantity = readList(reader);
-            int vectorQuantity = quantity.get(0);
+            int verticesQuantity = quantity.get(0);
             int edgesQuantity = quantity.get(1);
 
-            final A a = new A();
-            a.graph = a.initializeGraph(edgesQuantity, reader);
+            final List<Edge> maxST;
+            if (edgesQuantity > 0) {
+                final A a = new A();
+                a.graph = a.initializeGraph(edgesQuantity, reader);
+                maxST = a.findMaxST(a.graph);
+            } else {
+                maxST = null;
+            }
+            printResult(maxST, verticesQuantity);
+        }
+    }
 
-            final List<Edge> maxST = a.findMaxST(a.graph);
-
+    private static void printResult(List<Edge> maxST, int verticesQuantity) {
+        if (maxST == null) {
+            System.out.println(verticesQuantity > 1 ? "Oops! I did it again" : "0");
+        } else {
             int sum = 0;
             for (Edge edge : maxST) {
                 sum += edge.weight;
