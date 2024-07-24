@@ -16,7 +16,7 @@ public class B {
         return vectors[vertex];
     }
 
-    //возвращает массив списков смежных вершин для ориентированного графа
+    //возвращает массив списков исходящих смежных вершин для ориентированного графа
     private ArrayList<Integer>[] getEdgesData(int cityQuantity, BufferedReader reader) throws IOException {
         ArrayList<Integer>[] vectors = new ArrayList[cityQuantity + 1];
 
@@ -28,9 +28,9 @@ public class B {
             final String[] currentLine = readList(reader);
             for (int j = 1; j <= currentLine.length; j++) {
                 if (currentLine[j - 1].equals("R")) {
-                    vectors[i].add(j);
+                    vectors[i].add(i+j);
                 } else if (currentLine[j - 1].equals("B")) {
-                    vectors[j + 1].add(i);
+                    vectors[j + i].add(i);
                 }
             }
         }
