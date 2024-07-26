@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
  на каждом шаге  возьмем из приоритетной очереди ребро с максимальным весом, получив максимальный остов.
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-
 Получение максимального по весу ребра -  O(1)
 Операции с ребрами (добавление/удаление) - O(log E)
 Операции с узлами (добавлени) - O(1)
@@ -45,123 +44,127 @@ O(V+E), где V -количество вершин, E - количество р
 https://contest.yandex.ru/contest/25070/run-report/116292084/
      */
 
-class Edge {
+class Edge implements Comparable<Edge> {
     int weight;
-    Vertex start;
-    Vertex end;
+    int start;
+    int end;
 
-    public Edge(Vertex start, Vertex end, int weight) {
+    boolean startAdded = false;
+    boolean endAdded = false;
+
+    public Edge(int start, int end, int weight) {
         this.weight = weight;
         this.start = start;
         this.end = end;
     }
 
-    public int getWeight() {
-        return weight;
-    }
-}
-
-class Vertex {
-    int value;
-
-    public Vertex(int value) {
-        this.value = value;
+    public void markEndAsAdded(int vertex) {
+        if (start == vertex)
+            startAdded = true;
+        if (end == vertex)
+            endAdded = true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        Vertex v = (Vertex) o;
-        return this.value == v.value;
+    public int getEndInList(HashSet<Integer> vertices) {
+        return vertices.contains(end) ? end : vertices.contains(start) ? start : null;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(value);
+    public int compareTo(Edge edge) {
+        return -this.weight + edge.weight;
+    }
+
+    boolean isBothEndAdded() {
+        return startAdded && endAdded;
+    }
+
+    boolean isOneOrTwoEndsNotAdded() {
+        return (!startAdded) || (!endAdded);
     }
 }
 
 class Graph {
-    HashSet<Vertex> vertices;
-    HashSet<Edge> edges;
+    ArrayList<Edge>[] vertices;
+    int edgesQuantity = 0;
 
-    public Graph() {
-        this.vertices = new HashSet<>();
-        this.edges = new HashSet<>();
+    public Graph(int verticesQuantity, int edgesQuantity) {
+        this.edgesQuantity = edgesQuantity;
+        this.vertices = (ArrayList<Edge>[]) new ArrayList[verticesQuantity + 1];
     }
 }
 
 public class A {
     Graph graph;
-    ArrayList<Edge> maximumSpanningTree;
-    ArrayList<Vertex> notAddedVertices;  // Множество вершин, ещё не добавленных в остов.
-    ArrayList<Vertex> addedVertices;// Множество вершин, уже добавленных в остов.
-    ArrayList<Edge> edges;//Массив рёбер, исходящих из остовного дерева.
+    HashSet<Integer> notAddedVertices;  // Множество вершин, ещё не добавленных в остов.
+    PriorityQueue<Edge> edges;//Массив рёбер, исходящих из остовного дерева.
 
     public A() {
-        this.maximumSpanningTree = new ArrayList<>();
-        this.notAddedVertices = new ArrayList<>();
-        this.addedVertices = new ArrayList<>();
-        this.edges = new ArrayList<>();
+        this.notAddedVertices = new HashSet<>();
+        this.edges = new PriorityQueue<>();
     }
 
     //читает инпут, заполняет граф
-    private Graph initializeGraph(int edgesQuantity, BufferedReader reader) throws IOException {
-        final Graph graph = new Graph();
+    private void initializeGraph(int verticesQuantity, int edgesQuantity, BufferedReader reader) throws IOException {
+        graph = new Graph(verticesQuantity, edgesQuantity);
         for (int i = 1; i <= edgesQuantity; i++) {
             final List<Integer> currentLine = readList(reader);
-            final Vertex firstVertex = new Vertex(currentLine.get(0));
-            final Vertex secondVertex = new Vertex(currentLine.get(1));
+            final int firstVertex = currentLine.get(0);
+            final int secondVertex = currentLine.get(1);
             final Integer weight = currentLine.get(2);
 
             final Edge edge = new Edge(firstVertex, secondVertex, weight);
-            graph.vertices.add(firstVertex);
-            graph.vertices.add(secondVertex);
-            graph.edges.add(edge);
+            if (graph.vertices[firstVertex] == null) {
+                graph.vertices[firstVertex] = new ArrayList<>();
+            }
+            graph.vertices[firstVertex].add(edge);
+
+            if (graph.vertices[secondVertex] == null) {
+                graph.vertices[secondVertex] = new ArrayList<>();
+            }
+            graph.vertices[secondVertex].add(edge);
+
+            notAddedVertices.add(firstVertex);
+            notAddedVertices.add(secondVertex);
         }
-        return graph;
     }
 
-    private void addVertex(Vertex vertex) {
+    private void addVertex(int vertex) {
         //добавляем в  остов
-        addedVertices.add(vertex);
+
         //убираем из недобавленных в остов
         notAddedVertices.remove(vertex);
 
         //Добавим ко множеству потенциально добавляемых рёбер все,
         // которые исходят из новой вершины и входят в вершины, ещё не включённые в остов
-        for (Edge edge : graph.edges) {
-            if (edge.start.equals(vertex) && notAddedVertices.contains(edge.end)) {
-                edges.add(edge);
-            }
-        }
+
+        graph.vertices[vertex].forEach(edge -> edge.markEndAsAdded(vertex));
+        graph.vertices[vertex].stream().filter(Edge::isBothEndAdded).forEach(edge -> edges.remove(edge));
+        graph.vertices[vertex].stream().filter(Edge::isOneOrTwoEndsNotAdded).forEach(edge -> edges.add(edge));
     }
 
-    private List<Edge> findMaxST(Graph graph) {
-        if (graph.edges.isEmpty() && notAddedVertices.size() > 1) {
+    private Integer findMaxST(Graph graph) {
+        Integer sum = 0;
+        if (graph.edgesQuantity == 0 && notAddedVertices.size() > 1) {
             return null;
         } else {
-
-            notAddedVertices.addAll(graph.vertices);
-
             // Берём первую попавшуюся вершину
-            final Vertex vertex = graph.vertices.iterator().next();
+            Integer vertex = notAddedVertices.iterator().next();
             addVertex(vertex);
 
             while (!notAddedVertices.isEmpty() && !edges.isEmpty()) {
-                Edge edge = extractMaximum(edges);
-                if (notAddedVertices.contains(edge.end)) {
-                    maximumSpanningTree.add(edge);
-                    addVertex(edge.end);
-                }
+
+                Edge edge = extractMaximum();
+                vertex = edge.getEndInList(notAddedVertices);
+                sum += edge.weight;
+                addVertex(vertex);
             }
         }
-        return maximumSpanningTree;
+        return notAddedVertices.isEmpty() ? sum : null;
     }
 
-
     //  извлекает и возвращает  максимальное ребро из массива рёбер
-    private Edge extractMaximum(List<Edge> edges) {
-        Edge maxWeight = edges.stream().max(Comparator.comparing(Edge::getWeight)).get();
+    private Edge extractMaximum() {
+        Edge maxWeight = edges.peek();
         edges.remove(maxWeight);
         return maxWeight;
     }
@@ -173,10 +176,10 @@ public class A {
             int verticesQuantity = quantity.get(0);
             int edgesQuantity = quantity.get(1);
 
-            final List<Edge> maxST;
+            final Integer maxST;
             if (edgesQuantity > 0) {
                 final A a = new A();
-                a.graph = a.initializeGraph(edgesQuantity, reader);
+                a.initializeGraph(verticesQuantity, edgesQuantity, reader);
                 maxST = a.findMaxST(a.graph);
             } else {
                 maxST = null;
@@ -185,15 +188,11 @@ public class A {
         }
     }
 
-    private static void printResult(List<Edge> maxST, int verticesQuantity) {
-        if (maxST == null) {
+    private static void printResult(Integer maxSt, int verticesQuantity) {
+        if (maxSt == null) {
             System.out.println(verticesQuantity > 1 ? "Oops! I did it again" : "0");
         } else {
-            int sum = 0;
-            for (Edge edge : maxST) {
-                sum += edge.weight;
-            }
-            System.out.println(sum);
+            System.out.println(maxSt);
         }
     }
 
