@@ -1,10 +1,14 @@
 package sprint7;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-public class A {
+public class A2 {
 
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
@@ -24,14 +28,16 @@ public class A {
             for (Integer price : prices) {
                 final int currIndex = prices.indexOf(price);
                 //покупаю
-                if ((isTimeToBuy && currIndex == 0 && price != max) || (isTimeToBuy && price == min) || (isTimeToBuy && price < avg && indexOfMax < currIndex)) {
+                if ((isTimeToBuy && currIndex == 0 && price != max) || (isTimeToBuy && price == min) || (isTimeToBuy && (price < avg || prices.get(currIndex + 1) > price))) {
                     assetThatIHave += price;
                     isTimeToBuy = false;
+                    //  System.out.println(" покупаю " + price);
                     //продаю
-                } else if (!isTimeToBuy && currIndex + 1 == daysQuantity || !isTimeToBuy && price == max || (!isTimeToBuy && price > avg && indexOfMax < currIndex)) {
+                } else if (!isTimeToBuy && price > assetThatIHave && currIndex != daysQuantity && (currIndex < daysQuantity - 1 && prices.get(currIndex + 1) <= price) || !isTimeToBuy && currIndex + 1 == daysQuantity || !isTimeToBuy && price == max || (!isTimeToBuy && price > avg && indexOfMax < currIndex)) {
                     income += price - assetThatIHave;
                     assetThatIHave = 0;
                     isTimeToBuy = true;
+                    //  System.out.println(" продаю " + price);
                 }
             }
             System.out.println(income);
