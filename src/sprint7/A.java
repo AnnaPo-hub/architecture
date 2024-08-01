@@ -14,50 +14,30 @@ public class A {
 
             final List<Integer> prices = readList(reader);
 
-            final double max = calculateMaximum(prices);
-            final int indexOfMax = prices.indexOf((int) max);
-            final double min = calculateMinimum(prices);
-            final double avg = calculateAverage(prices);
-
             int income = 0;
             int assetThatIHave = 0;
-            for (Integer price : prices) {
-                final int currIndex = prices.indexOf(price);
+            for (int i = 0; i < daysQuantity; i++) {
+                int price = prices.get(i);
                 //покупаю
-                if ((isTimeToBuy && currIndex == 0 && price != max) || (isTimeToBuy && price == min) || (isTimeToBuy && price < avg && indexOfMax < currIndex)) {
+                if (i + 1 < prices.size() && price < prices.get(i + 1) && isTimeToBuy) {
                     assetThatIHave += price;
                     isTimeToBuy = false;
+                    // System.out.println("купила " + price);
                     //продаю
-                } else if (!isTimeToBuy && currIndex + 1 == daysQuantity || !isTimeToBuy && price == max || (!isTimeToBuy && price > avg && indexOfMax < currIndex)) {
+                    //могу продавать И
+                } else if (!isTimeToBuy && (
+                        //текущий элемент последний  и цена больше чем  цена акции у меня на руках ИЛИ
+                        (i + 1 == prices.size() && price > assetThatIHave) ||
+                                //текущий элемент  не последний   и  цена больше,  чем цена  на следующий день
+                                (i + 1 < prices.size() && price > prices.get(i + 1)))) {
                     income += price - assetThatIHave;
                     assetThatIHave = 0;
                     isTimeToBuy = true;
+                    // System.out.println("продала " + price);
                 }
             }
             System.out.println(income);
         }
-    }
-
-
-    private static double calculateAverage(List<Integer> prices) {
-        return prices.stream()
-                .mapToDouble(d -> d)
-                .average()
-                .orElse(0.0);
-    }
-
-    private static double calculateMinimum(List<Integer> prices) {
-        return prices.stream()
-                .mapToInt(v -> v)
-                .min()
-                .orElseThrow(NoSuchElementException::new);
-    }
-
-    private static double calculateMaximum(List<Integer> prices) {
-        return prices.stream()
-                .mapToInt(v -> v)
-                .max()
-                .orElseThrow(NoSuchElementException::new);
     }
 
     private static List<Integer> readList(BufferedReader reader) throws IOException {
