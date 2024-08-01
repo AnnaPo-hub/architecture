@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 
 public class B2 {
@@ -88,7 +89,7 @@ public class B2 {
 
         System.out.println(b.counter);
 
-
+        Collections.sort(b.schedule);
         b.schedule.forEach(System.out::println);
     }
 
