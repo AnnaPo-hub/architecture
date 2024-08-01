@@ -47,12 +47,14 @@ public class B {
             schedule.add(lesson);
             previousLesson = lesson;
             return true;
-        } else {
-            if (lesson.end > previousLesson.end && lesson.start >= previousLesson.end) {
-                schedule.add(lesson);
-                previousLesson = lesson;
-                return true;
-            }
+        } else if (lesson.end > previousLesson.end && lesson.start >= previousLesson.end) {
+            schedule.add(lesson);
+            previousLesson = lesson;
+            return true;
+        } else if (lesson.end < previousLesson.start) {
+            schedule.add(lesson);
+            previousLesson = lesson;
+            return true;
         }
         return false;
     }
