@@ -1,13 +1,19 @@
 package sprint7;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 class Lesson {
+    //class Lesson implements Comparable<Lesson> {
     double start;
     double end;
 
@@ -26,13 +32,19 @@ class Lesson {
 
     @Override
     public String toString() {
-        return start + " " + end;
+        DecimalFormat format = new DecimalFormat("0.#");
+        return format.format(start) + " " + format.format(end);
     }
+
+//    @Override
+//    public int compareTo(@NotNull Lesson lesson) {
+//        return  Double.compare(start, lesson.start);
+//    }
 }
 
 public class B {
 
-    ArrayList<Lesson> schedule;
+    List<Lesson> schedule;
     int counter;
     Lesson previousLesson;
 
@@ -79,6 +91,7 @@ public class B {
 
         System.out.println(b.counter);
 
+        Collections.sort(b.schedule);
         b.schedule.forEach(System.out::println);
     }
 
