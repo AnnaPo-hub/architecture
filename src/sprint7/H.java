@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class H {
+    int[][] flowers;
     int[][] dp;
 
     public H(int n, int m) {
+        this.flowers = new int[n + 1][m + 1];
         this.dp = new int[n + 1][m + 1];
     }
 
@@ -18,21 +20,33 @@ public class H {
     //+добавляем один дополнительный ряд снизу и один ряд слева в качестве каемочки
     private void initializeMatrix(BufferedReader reader, int n, int m) throws IOException {
 
-        for (int i = 0; i < n; i++) {
+        for (int i = n - 1; i >= 0; i--) {
 
             final List<Integer> currLine = readLine(reader);
 
-            for (int j = 0; j <= m; j++) {
+            for (int j = m - 1; j >= 0; j--) {
                 if (j == 0) {
-                    dp[i][j] = Integer.MIN_VALUE;
+                    flowers[i][j] = Integer.MIN_VALUE;
                 } else {
-                    dp[i][j] = currLine.get(j - 1);
+                    flowers[i][j] = currLine.get(j - 1);
                 }
             }
         }
 
         for (int j = 0; j <= m; j++) {
-            dp[n][j] = Integer.MIN_VALUE;
+            flowers[n][j] = Integer.MIN_VALUE;
+        }
+    }
+
+    private void countFlowersMax(int n, int m) {
+        for (int i = n; i >= 0; i--) {
+            for (int j = 0; j < m; j++) {
+                //базовый случай
+                //на первом шаге мы возьмём столько фишек, сколько есть в стартовой ячейке
+                // dp[i][j] = flowers[i][j];
+                dp[i][j] = Integer.max(dp[i - 1][j], dp[i][j - 1] + flowers[i][j]);
+            }
+
         }
     }
 
@@ -47,6 +61,10 @@ public class H {
             h.initializeMatrix(reader, n, m);
 
             System.out.println("matrix is ready ");
+
+            h.countFlowersMax(n, m);
+
+            System.out.println(h.dp[n - 1][m - 1]);
 
         }
     }
