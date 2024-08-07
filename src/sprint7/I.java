@@ -7,13 +7,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class H {
+public class I {
     int[][] flowers;
     int[][] dp;
 
-    public H(int n, int m) {
+    public I(int n, int m) {
         this.flowers = new int[n + 1][m + 1];
         this.dp = new int[n + 1][m + 1];
+        for (int i = 0; i <= n; i++) {
+            for (int j = 0; j <= m; j++) {
+                if (j == 0 || i == 0) {
+                    dp[i][j] = -1;
+                }
+            }
+
+        }
     }
 
     //заполняем поле цветочками
@@ -41,10 +49,50 @@ public class H {
             for (int j = 1; j <= m; j++) {
                 //базовый случай
                 //на первом шаге мы возьмём столько фишек, сколько есть в стартовой ячейке
-                if (i > 1 || j > 1)
+                if (i > 1 || j > 1) {
                     dp[i][j] = Integer.max(dp[i - 1][j], dp[i][j - 1]) + flowers[i][j];
+                }
             }
         }
+    }
+
+    private String findWay(int n, int m) {
+        final StringBuilder kondratinaWay = new StringBuilder();
+        int i = n;
+        int j = m;
+
+
+        while (i > 0 && j > 0) {
+            if (i == 1 && j == 1)
+                break;
+            int down = dp[i - 1][j];
+            int left = dp[i][j - 1];
+            if (down > left) {
+                kondratinaWay.append("U");
+                i -= 1;
+            } else if (down < left) {
+                j -= 1;
+                kondratinaWay.append("R");
+            } else {
+                kondratinaWay.append("R");
+                j -= 1;
+            }
+        }
+        if (j == 1) {
+            while (i != 1) {
+                kondratinaWay.append("U");
+                i -= 1;
+            }
+
+        }
+        if (i == 1) {
+            while (i != 1) {
+                kondratinaWay.append("U");
+                i -= 1;
+            }
+
+        }
+        return kondratinaWay.reverse().toString();
     }
 
 
@@ -54,12 +102,13 @@ public class H {
             final Integer n = matrixSize.get(0);
             final Integer m = matrixSize.get(1);
 
-            H h = new H(n, m);
+            I h = new I(n, m);
             h.initializeMatrixMirror(reader, n, m);
 
             h.countFlowersMax(n, m);
 
             System.out.println(h.dp[n][m]);
+            System.out.println(h.findWay(n, m));
 
         }
     }
