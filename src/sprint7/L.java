@@ -15,11 +15,11 @@ public class L {
     public L(int goldBarQuantity, int k) {
         this.dp = new int[goldBarQuantity + 1][k + 1];
         for (int i = 0; i <= goldBarQuantity; i++) {
-            for (int j = 0; j <= k; j++) {
-                if (j == 0 || i == 0) {
-                    dp[i][j] = -1;
-                }
-            }
+//            for (int j = 0; j <= k; j++) {
+//                if (j == 0 || i == 0) {
+//                    dp[i][j] = -1;
+//                }
+//            }
 
         }
 
@@ -36,29 +36,29 @@ public class L {
             final List<Integer> barWeights = readList(reader);
             // Collections.sort(barWeights);
             final L l = new L(goldBarQuantity, j);
-            for (int i = 1; i <= goldBarQuantity; i++) {
-                for (int k = 1; k <= j; k++) {
+            for (int i = 0; i < goldBarQuantity; i++) {
+                for (int k = 0; k < j; k++) {
                     // l.dp[0][0] = 0;
 
 
                     //предыдущий максимум
-                    int prevMax = i - 1 <= 0 ? 0 : l.dp[i - 1][k];
+                    int prevMax = i - 1 < 0 ? 0 : l.dp[i - 1][k];
                     System.out.println("предыдущий максимум  =  " + prevMax);
 
                     // вес текущего элемента
-                    int currWeight = barWeights.get(i - 1);
+                    int currWeight = barWeights.get(i);
                     System.out.println("вес текущего элемента currWeight =  " + currWeight);
 
 
                     //то, что поместится в оставшемся  свободном месте   в рюкзаке
-                    int b = k - currWeight <= 0 || i - 1 <= 0 ? 0 : l.dp[i - 1][k - currWeight];
+                    int b = k - currWeight < 0 || i - 1 <= 0 ? 0 : l.dp[i - 1][k - currWeight];
 
                     System.out.println("вес  такого рюкзака  приравнивается к нулю  " + (k - currWeight <= 0 || i - 1 <= 0));
                     System.out.println("b = " + b);
                     System.out.println("currWeight+ b = " + (currWeight + b));
 
                     System.out.println("запишу как  текущий максимум " + Integer.max(prevMax, (currWeight + b)));
-                    l.dp[i][k] = Integer.max(l.dp[i - 1][k], currWeight + b);
+                    l.dp[i][k] = Integer.max(prevMax, currWeight + b);
                 }
             }
             System.out.println(l.dp[goldBarQuantity][j]);
