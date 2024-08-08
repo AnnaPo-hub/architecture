@@ -1,8 +1,6 @@
 package sprint3.training;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,13 +8,16 @@ import java.util.stream.Collectors;
 
 public class G {
     public static void main(String[] args) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {
 
             final Integer quantity = Integer.parseInt(reader.readLine());
-            final List<Integer> clother = readList(reader);
-            quicksort(clother, 0, clother.size() - 1);
-            for (int i = 0; i < quantity; i++) {
-                System.out.print(clother.get(i) + " ");
+            if (quantity > 0) {
+                final List<Integer> clother = readList(reader);
+                partition(clother, 0, clother.size() - 1);
+                for (int i = 0; i < quantity; i++) {
+                    writer.write(clother.get(i) + " ");
+                }
             }
         }
     }
@@ -42,12 +43,6 @@ public class G {
 
         }
         return rightIndex;
-    }
-
-    public static void quicksort(List<Integer> array, int leftIndex, int rightIndex) {
-        if (leftIndex < rightIndex) {
-            partition(array, leftIndex, rightIndex);
-        }
     }
 
     private static List<Integer> readList(BufferedReader reader) throws IOException {

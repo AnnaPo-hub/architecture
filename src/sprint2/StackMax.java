@@ -25,15 +25,17 @@ public class StackMax {
     public void pop() {
         try {
             final Integer peek = stack.peek();
-            if (peek.equals(max)&&stack.size()==1){
-                max=null;
+            if (peek.equals(max) && stack.size() == 1) {
+                max = null;
                 stack.pop();
 
-            }
-             else if (peek.equals(max)&&stack.size()!=1) {
+            } else if (peek.equals(max) && stack.size() != 1) {
                 stack.pop();
                 max = find_max();
+            } else {
+                stack.pop();
             }
+
 
         } catch (EmptyStackException ex) {
             System.out.println("error");
@@ -44,9 +46,9 @@ public class StackMax {
         final Stack<Integer> cloneStack = (Stack<Integer>) stack.clone();
         int newMax = -100000000;
 
-        while (!cloneStack.isEmpty()){
+        while (!cloneStack.isEmpty()) {
             final Integer pop = cloneStack.pop();
-            if (pop> newMax){
+            if (pop > newMax) {
                 newMax = pop;
             }
         }
