@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +34,7 @@ public class L {
             final Integer j = firstLine.get(1);
 //слитки с номерами от 0 до i
             final List<Integer> barWeights = readList(reader);
-            Collections.sort(barWeights);
+           // Collections.sort(barWeights);
             final L l = new L(goldBarQuantity, j);
             for (int i = 1; i <= goldBarQuantity; i++) {
                 for (int k = 1; k <= j; k++) {
@@ -45,7 +44,8 @@ public class L {
                     int a = barWeights.get(i - 1);
                     System.out.println("вес текущего элемента " + a);
                     //то, что поместится в оставшемся  свободном месте   в рюкзаке
-                    int b = k - barWeights.get(i - 1) <= 0 ? 0 : a + l.dp[i - 1][k - barWeights.get(i - 1)];
+                    int b = k - barWeights.get(i - 1) <= 0 ? 0 : l.dp[i - 1][k - barWeights.get(i - 1)];
+                    System.out.println("вес  такого рюкзака  приравнивается к нулю" + (k - barWeights.get(i - 1) <= 0));
                     System.out.println("b = " + b);
 
                     System.out.println("запишу как  текущий максимум " + Integer.max(l.dp[i - 1][k], a + b));
