@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,18 +12,10 @@ public class L {
     //максимальная масса, которую можно забрать с собой
     int[][] dp;
 
-
     public L(int goldBarQuantity, int k) {
         this.dp = new int[goldBarQuantity + 1][k + 1];
         for (int i = 0; i <= goldBarQuantity; i++) {
-//            for (int j = 0; j <= k; j++) {
-//                if (j == 0 || i == 0) {
-//                    dp[i][j] = -1;
-//                }
-//            }
-
         }
-
     }
 
     //Одним из параметров динамики будет вместимость рюкзака
@@ -34,51 +27,32 @@ public class L {
             final Integer j = firstLine.get(1);
 //слитки с номерами от 0 до i
             final List<Integer> barWeights = readList(reader);
-            // Collections.sort(barWeights);
+            Collections.sort(barWeights);
             final L l = new L(goldBarQuantity, j);
-            for (int i = 0; i <= goldBarQuantity; i++) {
-                System.out.println("НАЧАЛО РЯДА " + i);
-                System.out.println("___________________________________");
-                for (int k = 0; k <= j; k++) {
-                    // l.dp[0][0] = 0;
+            for (int i = 0; i < goldBarQuantity; i++) {
 
+                for (int k = 0; k <= j; k++) {
 
                     //предыдущий максимум
                     int prevMax = i - 1 < 0 ? 0 : l.dp[i - 1][k];
-                    System.out.println("предыдущий максимум  =  " + prevMax);
 
                     // вес текущего элемента
                     int currWeight = barWeights.get(i);
-                    System.out.println("вес текущего элемента currWeight =  " + currWeight);
 
                     int x = k - currWeight;
-                    System.out.println(k + " - " + currWeight + " = " + x);
-                    System.out.println("x= " + x);
-                    int y = currWeight + prevMax;
                     if (x < 0) {
+
                         l.dp[i][k] = prevMax;
                     } else if (x == 0) {
                         l.dp[i][k] = currWeight;
-                    } else if (k >= y) {
-                        l.dp[i][k] = currWeight + prevMax;
                     } else {
-                        l.dp[i][k] = l.dp[i][k - 1];
-
+                        //то, что поместится в оставшемся  свободном месте   в рюкзаке
+                        int b = k - currWeight < 0 || i - 1 <= 0 ? 0 : l.dp[i - 1][k - currWeight];
+                        l.dp[i][k] = Integer.max(prevMax, currWeight + b);
                     }
-//
-//                    //то, что поместится в оставшемся  свободном месте   в рюкзаке
-//                    int b = k - currWeight < 0 || i - 1 <= 0 ? 0 : l.dp[i - 1][k - currWeight];
-//
-//                    System.out.println("вес  такого рюкзака  приравнивается к нулю  " + (k - currWeight <= 0 || i - 1 <= 0));
-//                    System.out.println("b = " + b);
-//                    System.out.println("currWeight+ b = " + (currWeight + b));
-
-                    System.out.println("записал как   МАКСИМУМ " + l.dp[i][k]);
-
-                    //              l.dp[i][k] = Integer.max(prevMax, currWeight + b);
                 }
             }
-            System.out.println(l.dp[goldBarQuantity][j]);
+            System.out.println(l.dp[goldBarQuantity - 1][j]);
         }
     }
 
