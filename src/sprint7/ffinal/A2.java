@@ -18,20 +18,25 @@ public class A2 {
             final List<String> secondLine = readList(reader);
             int secondLineSize = secondLine.size();
 
-            short counter = 0;
+            int maxLine = Integer.max(firstLineSize, secondLineSize);
+
             dp = new short[firstLineSize + 1][secondLineSize + 1];
 
-            for (int i = 0; i <= firstLineSize + 1; i++) {
-                for (int j = 0; j <= secondLineSize + 1; j++) {
+            for (int i = 0; i < firstLineSize; i++) {
+                for (int j = 0; j < secondLineSize; j++) {
                     if (i == 0 || j == 0) {
                         dp[i][j] = 0;
+                    } else if (firstLine.get(i).equals(secondLine.get(j))) {
+                        dp[i][j] = (short) (dp[i - 1][j - 1] + 1);
+                    } else {
+                        dp[i][j] = (short) Integer.max(dp[i][j - 1], dp[i - 1][j]);
                     }
                 }
-
             }
 
+            //   System.out.println("что получилось в  нижней правой ячейке " + dp[firstLineSize-1][secondLineSize-1]);
+            System.out.println(maxLine - dp[firstLineSize - 1][secondLineSize - 1]);
         }
-
     }
 
     private static List<String> readList(BufferedReader reader) throws IOException {
