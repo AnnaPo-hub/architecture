@@ -8,14 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class A {
-    //максимальная масса, которую можно забрать с собой
-    int[][] dp;
-
-    public A(int goldBarQuantity, int k) {
-        this.dp = new int[goldBarQuantity + 1][k + 1];
-        for (int i = 0; i <= goldBarQuantity; i++) {
-        }
-    }
+    static short[][] dp;
 
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
@@ -24,30 +17,24 @@ public class A {
             final List<String> secondLine = readList(reader);
             int secondLineSize = secondLine.size();
 
-            short counter = 0;
-            for (int i = 0; i < firstLineSize; i++) {
-                if ((i + 1 < firstLineSize) &&
-                        (firstLine.get(i + 1).equals(secondLine.get(i))) &&
-                        (firstLineSize > secondLineSize)) {
-                    firstLine.remove(i);
-                    firstLineSize -= 1;
-                    ++counter;
-                } else if ((i + 1 < secondLineSize) &&
-                        (firstLine.get(i).equals(secondLine.get(i + 1))) &&
-                        (firstLineSize < secondLineSize)) {
-                    secondLine.remove(i);
-                    secondLineSize -= 1;
-                    ++counter;
-                } else if (!firstLine.get(i).equals(secondLine.get(i))) {
-                    firstLine.set(i, secondLine.get(i));
-                    ++counter;
+            dp = new short[firstLineSize + 1][secondLineSize + 1];
+
+            for (int i = 0; i <= firstLineSize; i++) {
+                for (int j = 0; j <= secondLineSize; j++) {
+                    if (i == 0 && j == 0) {
+                        dp[i][j] = 0;
+                    } else if (i > 0 && j == 0) {
+                        dp[i][j] = (short) i;
+                    } else if (j > 0 && i == 0) {
+                        dp[i][j] = (short) j;
+                    } else {
+                        int m = firstLine.get(i - 1).equals(secondLine.get(j - 1)) ? 0 : 1;
+                        dp[i][j] = (short) Integer.min(dp[i - 1][j - 1] + m, Integer.min(dp[i][j - 1] + 1, dp[i - 1][j] + 1));
+                    }
                 }
             }
-
-            System.out.println(counter);
-
+            System.out.println(dp[firstLineSize][secondLineSize]);
         }
-
     }
 
     private static List<String> readList(BufferedReader reader) throws IOException {
