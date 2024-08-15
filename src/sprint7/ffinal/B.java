@@ -5,44 +5,83 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
+/*
+-- ПРИНЦИП РАБОТЫ --
+
+Используемая структура данных : массив
+
+Посчитаем сумму всех чисел в строке из инпута, разделим пополам,  если получилось нечетное число,
+то сразу возвращаем False. Отсортируем массив чисел из инпута.
+Используем индексы  строк для доступа к имеющимся числам из инпута.
+
+Добавим переменную  runningSum -  набегающая сумма. Очевидно, что если у нас сумма элементов меньше требуемой,
+то можно дальше не проверять.
+
+Проходим  по массиву в двух циклах. Во внешнем цикле будем увеличивать runningSum на i.
+Во внутреннем цикле проверяем, что runningSum меньше k, тк ,  если сумма набранных элементов меньше, то нет  смысла пробовать набирать дальше.
+Пропускаем элементы для которых проставлено true.
+Также проверяем остаток, если он положительный, то смотрим было ли решение для него.
+
+Получаем ответ в конце массива dp.
+
+-- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
+Очевидно,  что нам нужно понять только можем ли мы набрать половину суммы, чтобы утверждать, что мы можем  разбить сумму на 2 равные части.
+Далее  мы  разбили задачу на подзадачи , где на небольших значениях мы легко можем проверить, что действительно такие-то элементы мы можем сложить
+в требуемую сумму. Далее мы используем логические заключения для динамического перехода.
+ Очевидно, что если сумма набранных элементов меньше, то нет смысла  пробовать набирать  сумму дальше, что если текущий элемент выставлен true при предыдущем значении
+, значит он останется true и при текущем значении.
+Далее если разница между полусуммой  и текущим элементом, может быть набрана из других элементов, то значит и данная полусумма может быть набрана.
+
+-- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+O(N*K) - где N -   половина суммы  чисел в инпуте , а K - количество  символов в  инпуте, которое мы получаем в качестве  параметра.
+
+-- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+O(N) - где N -  половина суммы  чисел в инпуте
+
+--ID успешной посылки--
+https://contest.yandex.ru/contest/25597/run-report/116875139/
+ */
 public class B {
     //храним набор половины суммы
-    static short[][] dp;
+    static boolean[] dp;
 
     //Одним из параметров динамики будет половина суммы массива, которую будем набирать
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             final int gameQuantity = Integer.parseInt(reader.readLine());
-
             int[] scoreList = readList(reader);
+            Arrays.sort(scoreList);
             int sum = Arrays.stream(scoreList).sum();
             if (sum % 2 != 0) {
                 System.out.println("False");
             } else {
                 int half = Arrays.stream(scoreList).sum() / 2;
-                dp = new short[gameQuantity + 1][half + 1];
+                dp = new boolean[half + 1];
+                dp[0] = true;
+                int runningSum = 0;
                 for (int i = 0; i < gameQuantity; i++) {
+                    runningSum += scoreList[i];
                     for (int k = 0; k <= half; k++) {
 
-                        int prevMax = i - 1 < 0 ? 0 : dp[i - 1][k];
-                        int currElement = scoreList[i];
-
-                        int x = k - currElement;
-                        if (x < 0) {
-
-                            dp[i][k] = (short) prevMax;
-                        } else if (x == 0) {
-                            dp[i][k] = (short) currElement;
-                        } else {
-                            int y = k - currElement < 0 || i - 1 <= 0 ? 0 : dp[i - 1][k - currElement];
-                            dp[i][k] = (short) Integer.max(prevMax, currElement + y);
+                        // если сумма набранных элементов меньше, то зачем пробовать набирать дальше
+                        if ((runningSum < k)) break;
+                        // если текущий элемент True, то можно его не проверять дальше
+                        if (dp[k]) continue;
+                        //смотрим остаток, если он положительный, то смотрим было ли решение для него
+                        int rest = k - scoreList[i];
+                        if (rest >= 0) {
+                            dp[k] = dp[rest];
                         }
+
                     }
                 }
-                System.out.println(dp[gameQuantity - 1][half] == half ? "True" : "False");
+
+                System.out.println(dp[half] ? "True" : "False");
+
             }
         }
     }
+
 
     private static int[] readList(BufferedReader reader) throws IOException {
         return Arrays.stream(reader.readLine().split(" "))
