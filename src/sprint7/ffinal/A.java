@@ -9,8 +9,8 @@ import java.util.stream.Collectors;
 
 /*
 -- ПРИНЦИП РАБОТЫ --
-Используемая структура данных : двумерный массив, число строк равно длине первой строки, число столбцов длине второй строки.
-В  матрице dp  будем хранить расстояние по Левенштейну.
+Используемая структура данных : массив
+
 Базовый случай: если одна  из строк пустая ( i = 0 или j = 0), то расстояние Левенштейна  равно длине непустой строки.
 
 Используем индексы  строк и столбцов для доступа к символам строк из инпута.
@@ -38,7 +38,8 @@ O(N*M) - где N - количество символов в первой стр
 https://contest.yandex.ru/contest/25597/run-report/116815511/
  */
 public class A {
-    static short[][] dp;
+    static short[] dp_previous;
+    static short[] dp_current;
 
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
@@ -47,23 +48,24 @@ public class A {
             final List<String> secondLine = readList(reader);
             int secondLineSize = secondLine.size();
 
-            dp = new short[firstLineSize + 1][secondLineSize + 1];
+            dp_previous = new short[secondLineSize + 1];
+            dp_current = new short[secondLineSize + 1];
 
             for (int i = 0; i <= firstLineSize; i++) {
                 for (int j = 0; j <= secondLineSize; j++) {
                     if (i == 0 && j == 0) {
-                        dp[i][j] = 0;
+                        dp_current[j] = 0;
                     } else if (i > 0 && j == 0) {
-                        dp[i][j] = (short) i;
+                        dp_current[j] = (short) i;
                     } else if (j > 0 && i == 0) {
-                        dp[i][j] = (short) j;
+                        dp_current[j] = (short) j;
                     } else {
                         int m = firstLine.get(i - 1).equals(secondLine.get(j - 1)) ? 0 : 1;
-                        dp[i][j] = (short) Integer.min(dp[i - 1][j - 1] + m, Integer.min(dp[i][j - 1] + 1, dp[i - 1][j] + 1));
+                        dp_current[j] = (short) Integer.min(dp_previous[j - 1] + m, Integer.min(dp_current[j - 1] + 1, dp_previous[j] + 1));
                     }
                 }
             }
-            System.out.println(dp[firstLineSize][secondLineSize]);
+            System.out.println(dp_current[secondLineSize]);
         }
     }
 
