@@ -44,13 +44,10 @@ public class B {
             //взять более короткий
             int lengthMin = Integer.min(s1.length(), s2.length());
             String shortestString;
-            String longestString;
             if (s2.length() == lengthMin) {
                 shortestString = s2;
-                longestString = s1;
             } else {
                 shortestString = s1;
-                longestString = s2;
             }
             for (int i = 0; i < shortestString.length(); i++) {
 
@@ -64,10 +61,10 @@ public class B {
     }
 
     private static boolean isRestTheSame(String s1, String s2, int i) {
-        String substring = s1.substring(i, s1.length());
-        String substring2 = s2.substring(i + 1, s2.length());
-        String substring3 = s1.substring(i + 1, s1.length());
-        String substring4 = s2.substring(i, s2.length());
+        String substring = s1.substring(i);
+        String substring2 = s2.substring(i + 1);
+        String substring3 = s1.substring(i + 1);
+        String substring4 = s2.substring(i);
         return substring2.equals(substring) || substring3.equals(substring4);
     }
 }
