@@ -7,12 +7,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class E {
+    static int counter;
+
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String ritaLine = reader.readLine();
             final int giftLinesNumber = Integer.parseInt(reader.readLine());
 
-            final Map<Integer, String> map = new TreeMap<>(Collections.reverseOrder());
+            final Map<Integer, String> map = new TreeMap<>();
             for (int i = 0; i < giftLinesNumber; i++) {
                 final List<String> currLine = readList(reader);
                 int index = Integer.parseInt(currLine.get(1));
@@ -21,7 +23,7 @@ public class E {
             }
 
             for (var entry : map.entrySet()) {
-                ritaLine = insert(ritaLine, entry.getKey(), entry.getValue());
+                ritaLine = insert(ritaLine, entry.getKey() + counter, entry.getValue());
             }
             System.out.println(ritaLine);
         }
@@ -63,6 +65,7 @@ public class E {
             final char c = substring.charAt(i);
             string = substring1 + c + substring2;
         }
+        counter += shift;
         return string;
     }
 }
