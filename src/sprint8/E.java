@@ -7,9 +7,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class E {
-    static int counter;
 
     public static void main(String[] args) throws IOException {
+        int counter = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String ritaLine = reader.readLine();
             final int giftLinesNumber = Integer.parseInt(reader.readLine());
@@ -21,52 +21,21 @@ public class E {
                 String stringToInsert = currLine.get(0);
                 map.put(index, stringToInsert);
             }
-
+            StringBuilder builder = new StringBuilder();
             for (var entry : map.entrySet()) {
-                ritaLine = insert(ritaLine, entry.getKey() + counter, entry.getValue());
+                int key = entry.getKey() - counter;
+                builder.append(ritaLine, 0, key).append(entry.getValue());
+                ritaLine = ritaLine.substring(key);
+                counter += key;
             }
-            System.out.println(ritaLine);
+            builder.append(ritaLine);
+            System.out.println(builder.toString());
         }
     }
 
     private static List<String> readList(BufferedReader reader) throws IOException {
         return Arrays.stream(reader.readLine().split(" "))
                 .collect(Collectors.toList());
-    }
-
-
-    // Вставить строку substring в строку string после позиции index.
-    public static String insert(String string, int index, String substring) {
-        int length = string.length();
-        int shift = substring.length();
-        if (index > length) {
-            // index == length - край строки
-            throw new IllegalArgumentException("Нет такой позиции");
-        }
-        string = String.format("%-" + (length + shift) + "s", string);
-        if (length > 0) {
-            // Если length == 0, делать сдвиг нет смысла.
-            // Кроме того, не следует в вычислениях писать (length - 1),
-            // не проверив, что индекс не ноль.
-            // В некоторых языках длина представляется беззнаковым целым числом,
-            // в таком случае (length - 1) будет равен не -1, а числу MAX_INT,
-            // и цикл станет некорректным. Мы этого избегаем.
-            for (int i = length - 1; i >= index; i--) {
-                final String substring1 = string.substring(0, i + shift);
-                final char c = string.charAt(i);
-                final String substring2 = string.substring(i + shift + 1);
-
-                string = substring1 + c + substring2;
-            }
-        }
-        for (int i = 0; i < shift; i++) {
-            final String substring1 = string.substring(0, index + i);
-            final String substring2 = string.substring(index + i + 1);
-            final char c = substring.charAt(i);
-            string = substring1 + c + substring2;
-        }
-        counter += shift;
-        return string;
     }
 }
 
