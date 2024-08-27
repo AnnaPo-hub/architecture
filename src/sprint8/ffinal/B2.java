@@ -32,7 +32,7 @@ class Trie {
     public TrieNode addString(String word) {
         TrieNode currentNode = root;
 
-        for (int i = 0; i < word.length() - 1; i++) {
+        for (int i = 0; i < word.length(); i++) {
             // На каждом шаге работаем с одним символом
             char c = word.charAt(i);
 
@@ -48,7 +48,7 @@ class Trie {
     public boolean findNode(String word) {
         TrieNode currentNode = root;
 
-        for (int i = 0; i < word.length() - 1; i++) {
+        for (int i = 0; i < word.length(); i++) {
             char c = word.charAt(i);
             if (!currentNode.children.containsKey(c)) {
                 return false;
@@ -58,11 +58,26 @@ class Trie {
         }
         return true;
     }
+
+    public boolean isTextInside(String text, int index) {
+        TrieNode currentNode = root;
+
+        for (int i = index; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (!currentNode.children.containsKey(c)) {
+                return false;
+            } else {
+                currentNode = currentNode.children.get(c);
+                if (currentNode.terminal) {
+                    return isTextInside(text, i + 1);
+                }
+            }
+        }
+        return true;
+    }
 }
 
 public class B2 {
-
-
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String input = reader.readLine();
@@ -75,8 +90,11 @@ public class B2 {
                 trie.addString(currWord);
             }
 
-            System.out.println(trie.findNode("i"));
-            printSorted(trie.root);
+            //  System.out.println(trie.findNode("i"));
+            //   printSorted(trie.root);
+
+            boolean textInside = trie.isTextInside(input, 0);
+            System.out.println(textInside ? "YES" : "NO");
         }
     }
 
