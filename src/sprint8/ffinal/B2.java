@@ -59,7 +59,7 @@ class Trie {
         return true;
     }
 
-    //scsscevscevscesscsc
+
     public boolean isTextInside(String text, int index) {
         TrieNode currentNode = root;
 
@@ -77,7 +77,7 @@ class Trie {
             if (!currentNode.children.containsKey(c) && currentNode.terminal) {
                 System.out.println("иду заново искать, начиная с root");
                 int temp = i;
-                return isTextInside(text, temp + 1);
+                return isTextInside(text, temp);
             }
             if (!currentNode.children.containsKey(c)) {
                 System.out.println("текущая нода" + currentNode + "не содержит потомка " + c);
@@ -124,7 +124,7 @@ public class B2 {
                 trie.addString(currWord);
             }
 
-            printSorted(trie.root);
+            // printSorted(trie.root);
 
             boolean textInside = trie.isTextInside(input, 0);
             System.out.println(textInside ? "YES" : "NO");
