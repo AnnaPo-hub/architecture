@@ -61,42 +61,50 @@ class Trie {
 
 
     public boolean isTextInside(String text, int index) {
+//        System.out.println("зашел в isTextInside");
+//        System.out.println("text. length = " + text.length());
+//        System.out.println("index  = " + index);
         TrieNode currentNode = root;
 
         for (int i = index; i < text.length(); i++) {
+            // System.out.println("зашел в цикл " );
             char c = text.charAt(i);
             if (currentNode.terminal && currentNode.children.size() == 0 && i < text.length() - 1) {
-                System.out.println("иду заново искать, начиная с root");
+                //  System.out.println("иду заново искать, начиная с root");
 
                 return isTextInside(text, i);
+            }
+            if (i == text.length() - 1 && !currentNode.terminal && currentNode.children.containsKey(c)) {
+                return true;
             }
             //последний символ текста
             if (i == text.length() - 1 && !currentNode.terminal) {
                 return false;
             }
             if (!currentNode.children.containsKey(c) && currentNode.terminal) {
-                System.out.println("иду заново искать, начиная с root");
+                // System.out.println("иду заново искать, начиная с root");
                 int temp = i;
                 return isTextInside(text, temp);
             }
             if (!currentNode.children.containsKey(c)) {
-                System.out.println("текущая нода" + currentNode + "не содержит потомка " + c);
+                // System.out.println("текущая нода" + currentNode + "не содержит потомка " + c);
                 return false;
             } else {
                 currentNode = currentNode.children.get(c);
-                System.out.println("перешел в ноду " + c);
+                // System.out.println("перешел в ноду " + c);
 
                 char nextChar = text.charAt(i + 1);
 
                 if (!currentNode.children.containsKey(nextChar) && currentNode.terminal) {
                     int temp = i;
-                    System.out.println("иду заново искать, начиная с root");
+                    // System.out.println("иду заново искать, начиная с root");
                     return isTextInside(text, temp + 1);
                     //cледующая находится
                 } else if (currentNode.children.containsKey(nextChar)) {
+
                     currentNode = currentNode.children.get(nextChar);
                     ++i;
-                    System.out.println("перешел в ноду " + nextChar);
+                    //  System.out.println("перешел в ноду " + nextChar);
                 }
 
 
