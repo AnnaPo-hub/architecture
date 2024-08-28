@@ -61,37 +61,39 @@ class Trie {
 
 
     public boolean isTextInside(String text, int index) {
-//        System.out.println("зашел в isTextInside");
-//        System.out.println("text. length = " + text.length());
-//        System.out.println("index  = " + index);
         TrieNode currentNode = root;
 
         for (int i = index; i < text.length(); i++) {
-            // System.out.println("зашел в цикл " );
+            //проходим посимвольно
             char c = text.charAt(i);
-            if (currentNode.terminal && currentNode.children.size() == 0 && i < text.length() - 1) {
-                //  System.out.println("иду заново искать, начиная с root");
-
-                return isTextInside(text, i);
-            }
-            if (i == text.length() - 1 && !currentNode.terminal && currentNode.children.containsKey(c)) {
-                return true;
-            }
-            //последний символ текста
-            if (i == text.length() - 1 && !currentNode.terminal) {
-                return false;
-            }
+            //если у текущей ноды нет перехода к узлу с нужной буквой  и она терминальная , то идем искать заново со следующего индекса
             if (!currentNode.children.containsKey(c) && currentNode.terminal) {
-                // System.out.println("иду заново искать, начиная с root");
+                //  System.out.println("иду заново искать, начиная с root");
                 int temp = i;
                 return isTextInside(text, temp);
             }
+            //если у текущей ноды нет перехода к узлу с нужной буквой, то возвращаем false
             if (!currentNode.children.containsKey(c)) {
                 // System.out.println("текущая нода" + currentNode + "не содержит потомка " + c);
                 return false;
             } else {
+                //если есть переход к нужной букве, то переходим в нее
                 currentNode = currentNode.children.get(c);
-                // System.out.println("перешел в ноду " + c);
+                // System.out.println("перешла в ноду "+ c);
+                //если текущая нода терминальная и у нее нет детей, то идем искать заново, начиная  с root
+                if (currentNode.terminal && currentNode.children.size() == 0 && i < text.length() - 1) {
+                    //  System.out.println("иду заново искать, начиная с root");
+
+                    return isTextInside(text, i + 1);
+                }
+                if (i == text.length() - 1 && currentNode.terminal) {
+                    return true;
+                }
+                //последний символ текста
+                if (i == text.length() - 1 && !currentNode.terminal) {
+                    return false;
+                }
+
 
                 char nextChar = text.charAt(i + 1);
 
@@ -104,14 +106,9 @@ class Trie {
 
                     currentNode = currentNode.children.get(nextChar);
                     ++i;
-                    //  System.out.println("перешел в ноду " + nextChar);
+                    //   System.out.println("перешел в ноду " + nextChar);
                 }
 
-
-//                } else if (currentNode.terminal && i < text.length() - 1) {
-//                    return isTextInside(text, i + 1);
-//
-//
             }
         }
         return true;
