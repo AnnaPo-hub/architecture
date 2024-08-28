@@ -22,7 +22,7 @@ import java.util.*;
  */
 
 class TrieNode {
-    Map<Character, TrieNode> children = new TreeMap<>();
+    Map<Character, TrieNode> children = new HashMap<>();
     boolean terminal;
 }
 
@@ -59,21 +59,55 @@ class Trie {
         return true;
     }
 
+    //scsscevscevscesscsc
     public boolean isTextInside(String text, int index) {
         TrieNode currentNode = root;
 
         for (int i = index; i < text.length(); i++) {
             char c = text.charAt(i);
+            if (currentNode.terminal && currentNode.children.size() == 0 && i < text.length() - 1) {
+                System.out.println("иду заново искать, начиная с root");
+
+                return isTextInside(text, i);
+            }
+            //последний символ текста
+            if (i == text.length() - 1 && !currentNode.terminal) {
+                return false;
+            }
+            if (!currentNode.children.containsKey(c) && currentNode.terminal) {
+                System.out.println("иду заново искать, начиная с root");
+                int temp = i;
+                return isTextInside(text, temp + 1);
+            }
             if (!currentNode.children.containsKey(c)) {
+                System.out.println("текущая нода" + currentNode + "не содержит потомка " + c);
                 return false;
             } else {
                 currentNode = currentNode.children.get(c);
-                if (currentNode.terminal) {
-                    return isTextInside(text, i + 1);
+                System.out.println("перешел в ноду " + c);
+
+                char nextChar = text.charAt(i + 1);
+
+                if (!currentNode.children.containsKey(nextChar) && currentNode.terminal) {
+                    int temp = i;
+                    System.out.println("иду заново искать, начиная с root");
+                    return isTextInside(text, temp + 1);
+                    //cледующая находится
+                } else if (currentNode.children.containsKey(nextChar)) {
+                    currentNode = currentNode.children.get(nextChar);
+                    ++i;
+                    System.out.println("перешел в ноду " + nextChar);
                 }
+
+
+//                } else if (currentNode.terminal && i < text.length() - 1) {
+//                    return isTextInside(text, i + 1);
+//
+//
             }
         }
         return true;
+
     }
 }
 
@@ -90,8 +124,7 @@ public class B2 {
                 trie.addString(currWord);
             }
 
-            //  System.out.println(trie.findNode("i"));
-            //   printSorted(trie.root);
+            printSorted(trie.root);
 
             boolean textInside = trie.isTextInside(input, 0);
             System.out.println(textInside ? "YES" : "NO");
