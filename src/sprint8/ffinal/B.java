@@ -1,94 +1,103 @@
 package sprint8.ffinal;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
 
 /*
 -- ПРИНЦИП РАБОТЫ --
-Используемая структура данных : TreeSet - для хранения алфавита
-Складываем все строчки из инпута в TreeSet в обратном порядке,  получаем наш "алфавит".
+Используемая структура данных :  префиксное дерево для хранения "алфавита" - слов из инпута,
+массив для хранения промежуточного результата
 
-Далее в цикле проходим по каждому слову из алфавита, находим индекс каждого его вхождения в текст.
-Затем по списку полученных индексов заменяем в тексте слово из алфавита на "".
-
-Если после прохождения всего алфавита осталась пустая строка, то значит из данного алфавита можно сложить
-требуемую строку.
+Получаем все слова из инпута и заносим их  в префиксное дерево.
+Далее воспользуемся методами динамического программирования:
+В массиве dp будем хранить возможность создать  данную строку  из данного "алфавита".
+Базовый случай: строка из 0 элементов может быть составлена из любого алфавита, поэтому   dp[0] = true;
+Проходим посимвольно по тексту из инпута и идем по префиксному дереву.
+Переход динамики: если текущий узел терминальный и без текущего слова результат был true, тогда записываем в ячейку true;
+иначе - false.
+Получаем ответ в конце массива.
 
 -- ДОКАЗАТЕЛЬСТВО КОРРЕКТНОСТИ --
 
 
+
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
+Построение префиксного дерева - O(L), где L — суммарная длина всех слов из инпута
+Проход по дереву - O(n^2), где n - количество символов в строке
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
+Префиксное дерево - O(L), где L — суммарная длина всех слов из инпута.
+Массив занимает - O(n), где n - количество символов в строке.
 
 --ID успешной посылки--
+https://contest.yandex.ru/contest/26133/run-report/117257396/
  */
-public class B {
-    private static Set<String> alphabet;
 
+class TrieNode {
+    TrieNode[] children = new TrieNode[26];
+    boolean terminal;
+
+
+    public TrieNode put(Character c) {
+        if (children[c - 'a'] == null) {
+            children[c - 'a'] = new TrieNode();
+        }
+        return children[c - 'a'];
+    }
+}
+
+class Trie {
+    TrieNode root = new TrieNode();
+    boolean[] dp;
+
+    public void addString(String word) {
+        TrieNode currentNode = root;
+
+        for (int i = 0; i < word.length(); i++) {
+            currentNode = currentNode.put(word.charAt(i));
+        }
+        currentNode.terminal = true;
+    }
+
+    public boolean isTextInside(String text) {
+        dp = new boolean[text.length() + 1];
+        dp[0] = true;
+
+        for (int i = 0; i < text.length(); i++) {
+            TrieNode currentNode = root;
+            if (dp[i]) {
+                for (int j = i; j < text.length() + 1; j++) {
+                    if (currentNode.terminal)
+                        dp[j] = true;
+
+                    if ((j == text.length()) || currentNode.children[text.charAt(j) - 'a'] == null) {
+                        break;
+                    }
+                    currentNode = currentNode.children[text.charAt(j) - 'a'];
+                }
+            }
+        }
+        return dp[dp.length - 1];
+    }
+}
+
+public class B {
     public static void main(String[] args) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
             String input = reader.readLine();
             int alphabetQuantity = Integer.parseInt(reader.readLine());
 
-            alphabet = new TreeSet<>(Collections.reverseOrder());
+            Trie trie = new Trie();
 
             for (int i = 0; i < alphabetQuantity; i++) {
                 String currWord = reader.readLine();
-                alphabet.add(currWord);
+                trie.addString(currWord);
             }
 
-            String replace = input;
-            for (String currWord : alphabet) {
-                List<Integer> search = search(currWord, replace);
-                String candidate = replace(replace, "", search, 0, currWord);
-
-            }
-            System.out.println(replace.length() == 0 ? "YES" : "NO");
+            boolean textInside = trie.isTextInside(input);
+            System.out.println(textInside ? "YES" : "NO");
         }
-    }
-
-    public static List<Integer> search(String p, String text) {
-        // Функция возвращает все позиции вхождения шаблона в тексте.
-        List<Integer> result = new ArrayList<>();
-        String s = p + "#" + text;
-        int[] π = new int[p.length()];  // Массив длины |p|.
-        Arrays.fill(π, 0);
-        int π_prev = 0;
-        for (int i = 1; i < s.length(); i++) {
-            int k = π_prev;
-            while (k > 0 && s.charAt(k) != s.charAt(i)) {
-                k = π[k - 1];
-            }
-            if (s.charAt(k) == s.charAt(i)) {
-                k++;
-            }
-            // Запоминаем только первые |p| значений π-функции.
-            if (i < p.length()) {
-                π[i] = k;
-            }
-            // Запоминаем последнее значение π-функции.
-            π_prev = k;
-            // Если значение π-функции равно длине шаблона, то вхождение найдено.
-            if (k == p.length()) {
-                // i - это позиция конца вхождения шаблона.
-                // Дважды отнимаем от него длину шаблона, чтобы получить позицию начала:
-                //  - чтобы «переместиться» на начало найденного шаблона,
-                //  - чтобы не учитывать добавленное "pattern#".
-                result.add(i - 2 * p.length());
-            }
-        }
-        return result;
-    }
-
-    private static String replace(String string, String patternToInsert, List<Integer> search, int counter, String pattern) {
-        StringBuilder builder = new StringBuilder(string);
-        for (var entry : search) {
-            builder.replace(entry + counter, entry + counter + pattern.length(), patternToInsert);
-            counter += patternToInsert.length() - pattern.length();
-        }
-        return builder.toString();
     }
 }
