@@ -40,7 +40,10 @@ import java.util.Queue;
 
 
 -- ВРЕМЕННАЯ СЛОЖНОСТЬ --
-О(n) -  где n - количество символов в строках инпута
+Распаковка слов :
+О(n) -  где n - количество символов в распакованных строках
+Поиск общего индекса: О(n) -  где n - количество символов в распакованных строках
+Получаем общую сложность О(n) -  где n - общее количество символов в распакованных строках
 
 -- ПРОСТРАНСТВЕННАЯ СЛОЖНОСТЬ --
 O(n)  - где n - количество слов в инпуте, которое мы получаем в качестве первого параметра.
@@ -90,7 +93,6 @@ public class A {
 
     private static Character[] readList(BufferedReader reader) throws IOException {
         return reader.readLine().chars().mapToObj(c -> (char) c).toArray(Character[]::new);
-
     }
 
     private static String getMaxPrefix(String[] strings) {
