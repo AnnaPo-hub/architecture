@@ -99,23 +99,27 @@ public class A {
         } else if (strings.length == 1) {
             return strings[0];
         } else {
-            String longestPrefix = strings[0];
-            for (int i = 1; i < strings.length; i++) {
-                String currString = strings[i];
-                int ind1 = 0;
-                int ind2 = 0;
-
-                while (ind2 < longestPrefix.length() && ind2 < currString.length()) {
-                    if (longestPrefix.charAt(ind2) == currString.charAt(ind2)) {
-                        ++ind1;
-                    } else {
-                        break;
-                    }
-                    ++ind2;
-                }
-                longestPrefix = longestPrefix.substring(0, ind1);
-            }
-            return longestPrefix;
+            return getCommonPrefix(strings);
         }
+    }
+
+    private static String getCommonPrefix(String[] strings) {
+        String longestPrefix = strings[0];
+        for (int i = 1; i < strings.length; i++) {
+            String currString = strings[i];
+            int ind1 = 0;
+            int ind2 = 0;
+
+            while (ind2 < longestPrefix.length() && ind2 < currString.length()) {
+                if (longestPrefix.charAt(ind2) == currString.charAt(ind2)) {
+                    ++ind1;
+                } else {
+                    break;
+                }
+                ++ind2;
+            }
+            longestPrefix = longestPrefix.substring(0, ind1);
+        }
+        return longestPrefix;
     }
 }
